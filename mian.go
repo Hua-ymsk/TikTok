@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-
+	defer dao.Close()
 	if err := dao.Connect(); err != nil {
-		fmt.Println(errors.New("连接失败"))
+		fmt.Println(errors.New("connet error"))
 		return
 	}
 	r := gin.Default()

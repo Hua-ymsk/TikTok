@@ -9,7 +9,6 @@ import (
 var db *sql.DB
 
 func Connect() (err error) {
-	defer Close()
 	db, err = sql.Open("mysql", "tiktok_user:tiktok_passwd_2024@tcp(101.33.204.176:3306)/TikTok?charset=utf8")
 	if err != nil {
 		return
