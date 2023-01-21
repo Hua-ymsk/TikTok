@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"gin-demo/basic/dao"
 	"github.com/gin-gonic/gin"
+	"tiktok/dao"
 )
 
 func main() {

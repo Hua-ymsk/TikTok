@@ -1,4 +1,4 @@
-module gin-demo/basic
+module tiktok
 
 go 1.19
 
