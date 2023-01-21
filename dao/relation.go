@@ -11,7 +11,7 @@ func UserExist(Token string) (UserId string, err error) {
 	return
 }
 
-// FollowExist 查询对方关注信息是否存在
+// FollowExist 查询关注信息是否存在
 func FollowExist(UserId string, ToUserId string) (Exist bool, err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
@@ -21,7 +21,7 @@ func FollowExist(UserId string, ToUserId string) (Exist bool, err error) {
 	if err != nil {
 		return false, fmt.Errorf("Parameter error :%s", err)
 	}
-	sqlStatement := "SELECT * FROM Follows WHERE followed_user_id=? and following_user_id=?;"
+	sqlStatement := "SELECT * FROM Follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return false, fmt.Errorf("select init error :%s", err)
