@@ -10,7 +10,7 @@ import (
 func main() {
 	defer dao.Close()
 	if err := dao.Connect(); err != nil {
-		fmt.Println(errors.New("connet error"))
+		fmt.Println(errors.New("connect error"))
 		return
 	}
 	r := gin.Default()

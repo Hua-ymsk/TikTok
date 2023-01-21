@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"gin-demo/basic/dao"
+	"tiktok/dao"
 )
 
 type FollowUser struct { //关注用户信息

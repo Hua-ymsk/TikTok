@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gin-demo/basic/controller"
 	"github.com/gin-gonic/gin"
+	"tiktok/controller"
 )
 
 func initRouter(r *gin.Engine) {

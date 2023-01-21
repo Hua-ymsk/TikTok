@@ -15,11 +15,11 @@ func UserExist(Token string) (UserId string, err error) {
 func FollowExist(UserId string, ToUserId string) (Exist bool, err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return false, fmt.Errorf("Parameter error :%s", err)
+		return false, fmt.Errorf("parameter error :%s", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return false, fmt.Errorf("Parameter error :%s", err)
+		return false, fmt.Errorf("parameter error :%s", err)
 	}
 	sqlStatement := "SELECT * FROM Follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
@@ -41,11 +41,11 @@ func FollowExist(UserId string, ToUserId string) (Exist bool, err error) {
 func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	sqlStatement := "INSERT INTO Follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
 	stmt, err := db.Prepare(sqlStatement)
@@ -63,11 +63,11 @@ func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) 
 func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	sqlStatement := "UPDATE Follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
@@ -85,11 +85,11 @@ func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error
 func DeleteFollow(UserId string, ToUserId string) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return fmt.Errorf("Parameter error :%s", err)
+		return fmt.Errorf("parameter error :%s", err)
 	}
 	sqlStatement := "DELETE FROM Follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)

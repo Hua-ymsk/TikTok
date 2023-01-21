@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"gin-demo/basic/logic"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"tiktok/logic"
 )
 
 func RelationAction(c *gin.Context) {
