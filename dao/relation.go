@@ -2,7 +2,6 @@ package dao
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strconv"
 )
@@ -19,23 +18,21 @@ func TokenResolution(Token string) (userId string, err error) {
 func UserExist(Token string) (userId string, err error) {
 	userId, err = TokenResolution(Token)
 	if err != nil {
-		return "", errors.New("token resolution error")
+		return "", fmt.Errorf("token resolution error: %w", err)
 	}
 	sqlStatement := "SELECT * FROM Users WHERE id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return "", errors.New("select init error")
+		return "", fmt.Errorf("select init error: %w", err)
 	}
 	res, err := stmt.Query(userId)
 	if err != nil {
-		return "", errors.New("select execute error")
+		return "", fmt.Errorf("select execute error: %w", err)
 	}
 	defer res.Close()
 	if res.Next() == false {
-		fmt.Println("user not exist")
-		return "", errors.New("user not exist error")
+		return "", fmt.Errorf("user not exist error: %w", err)
 	}
-	fmt.Println("user exist")
 	return Token, nil
 }
 
@@ -43,20 +40,20 @@ func UserExist(Token string) (userId string, err error) {
 func FollowExist(UserId string, ToUserId string) (exist bool, err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return false, errors.New("parameter error")
+		return false, fmt.Errorf("parameter error: %w", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return false, errors.New("parameter error")
+		return false, fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement := "SELECT * FROM Follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return false, errors.New("select init error")
+		return false, fmt.Errorf("select init error: %w", err)
 	}
 	res, err := stmt.Query(userId, toUserId)
 	if err != nil {
-		return false, errors.New("select execute error")
+		return false, fmt.Errorf("select execute error: %w", err)
 	}
 	defer res.Close()
 	if res.Next() == false {
@@ -69,20 +66,20 @@ func FollowExist(UserId string, ToUserId string) (exist bool, err error) {
 func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement := "INSERT INTO Follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return errors.New("insert init error")
+		return fmt.Errorf("insert init error: %w", err)
 	}
 	_, err = stmt.Exec(userId, toUserId, Relationship)
 	if err != nil {
-		return errors.New("insert execute error")
+		return fmt.Errorf("insert execute error: %w", err)
 	}
 	return nil
 }
@@ -91,20 +88,20 @@ func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) 
 func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement := "UPDATE Follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return errors.New("update init error")
+		return fmt.Errorf("update init error: %w", err)
 	}
 	_, err = stmt.Exec(Relationship, userId, toUserId)
 	if err != nil {
-		return errors.New("update execute error")
+		return fmt.Errorf("update execute error: %w", err)
 	}
 	return nil
 }
@@ -113,20 +110,20 @@ func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error
 func DeleteFollow(UserId string, ToUserId string) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	toUserId, err := strconv.Atoi(ToUserId)
 	if err != nil {
-		return errors.New("parameter error")
+		return fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement := "DELETE FROM Follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return errors.New("delete init error")
+		return fmt.Errorf("delete init error: %w", err)
 	}
 	_, err = stmt.Exec(userId, toUserId)
 	if err != nil {
-		return errors.New("delete execute error")
+		return fmt.Errorf("delete execute error: %w", err)
 	}
 	return nil
 }
@@ -135,7 +132,7 @@ func DeleteFollow(UserId string, ToUserId string) (err error) {
 func SelectFollowList(UserId string) (*sql.Rows, error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return nil, errors.New("parameter error")
+		return nil, fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement :=
 		`SELECT
@@ -152,11 +149,11 @@ func SelectFollowList(UserId string) (*sql.Rows, error) {
 			f.following_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return nil, errors.New("select init error")
+		return nil, fmt.Errorf("select init error: %w", err)
 	}
 	res, err := stmt.Query(userId)
 	if err != nil {
-		return nil, errors.New("select execute error")
+		return nil, fmt.Errorf("select execute error: %w", err)
 	}
 	return res, nil
 }
@@ -165,7 +162,7 @@ func SelectFollowList(UserId string) (*sql.Rows, error) {
 func SelectFollowerList(UserId string) (*sql.Rows, error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return nil, errors.New("parameter error")
+		return nil, fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement :=
 		`SELECT
@@ -183,11 +180,11 @@ func SelectFollowerList(UserId string) (*sql.Rows, error) {
 			f.followed_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return nil, errors.New("select init error")
+		return nil, fmt.Errorf("select init error: %w", err)
 	}
 	res, err := stmt.Query(userId, userId)
 	if err != nil {
-		return nil, errors.New("select execute error")
+		return nil, fmt.Errorf("select execute error: %w", err)
 	}
 	return res, nil
 }
@@ -196,7 +193,7 @@ func SelectFollowerList(UserId string) (*sql.Rows, error) {
 func SelectFriendList(UserId string) (*sql.Rows, error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
-		return nil, errors.New("parameter error")
+		return nil, fmt.Errorf("parameter error: %w", err)
 	}
 	sqlStatement :=
 		`SELECT
@@ -213,11 +210,11 @@ func SelectFriendList(UserId string) (*sql.Rows, error) {
 			f.following_user_id = ? and f.relationship = 1;`
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return nil, errors.New("select init error")
+		return nil, fmt.Errorf("select init error: %w", err)
 	}
 	res, err := stmt.Query(userId)
 	if err != nil {
-		return nil, errors.New("select execute error")
+		return nil, fmt.Errorf("select execute error: %w", err)
 	}
 	return res, nil
 }
