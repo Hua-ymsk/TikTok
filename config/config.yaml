@@ -1,0 +1,22 @@
+name: "sample-tiktok"
+mode: "dev"
+port: 9090
+
+JwtAuth:
+  AccessSecret: "ae0536f9-6450-4606-8e13-5a19ed505da0"
+  AccessExpire: 604800  
+
+FTP:
+  ServerAddr: "1.12.58.218:21"
+  Name: "tiktok"
+  Pwd: "74563jkas"
+
+Mysql:
+  host: "hymsk.asia"
+  port: "3306"
+  user: "tiktok_user"
+  pwd: "tiktok_passwd_2024"
+  dbname: "TikTok"
+  max_open_conns: 200
+  max_idle_conns: 50
+
