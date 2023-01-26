@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "E:\\Project\\GoProject\\gin_tiktok\\Tiktok"
+            "program": "E:\\Project\\GoProject\\Tiktok"
         }
     ]
 }

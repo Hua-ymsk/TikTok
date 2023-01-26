@@ -2,6 +2,7 @@ package router
 
 import (
 	"tiktok/controller"
+	"tiktok/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,7 @@ func InitRouter() *gin.Engine {
 		// video apis
 		apiRouter.GET("/feed", videoAPI.FeedHandler)
 		video := apiRouter.Group("/pulish")
+		video.Use(middleware.JWTAuth())
 		{
 			video.POST("/action", videoAPI.PublishHandler)
 			video.GET("/list", videoAPI.PublishListHandler)

@@ -13,21 +13,29 @@ type AppConfig struct {
 	*LogConfig   `mapstructure:"log"`
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
+	*JwtConfig   `mapstructure:"JwtAuth"`
 }
 
 type LogConfig struct{}
 
 type MysqlConfig struct {
-	Host         string `mapstructure:"host"`
-	User         string `mapstructure:"user"`
-	Pwd          string `mapstructure:"pwd"`
-	DB           string `mapstructure:"dbname"`
-	Port         string    `mapstructure:"port"`
-	MaxOpenConns int    `mapstructure:"max_open_conns"`
-	MaxIdleConns int    `mapstructure:"max_idle_conns"`
+	Host         string `mapstructure:"Host"`
+	User         string `mapstructure:"User"`
+	Pwd          string `mapstructure:"Pwd"`
+	DB           string `mapstructure:"DBname"`
+	Port         string `mapstructure:"Port"`
+	MaxOpenConns int    `mapstructure:"Max_open_conns"`
+	MaxIdleConns int    `mapstructure:"Max_idle_conns"`
 }
 
 type RedisConfig struct{}
+
+type JwtConfig struct {
+	AccessSecret string `mapstructure:"AccessSecret"`
+	AccessExpire string `mapstructure:"AccessExpire"`
+	RefreshExpire string `mapstructure:"RefreshExpire"`
+	Issuer string `mapstructure:"Issuer"`
+} 
 
 var Conf = new(AppConfig)
 

@@ -3,8 +3,12 @@ mode: "dev"
 port: 9090
 
 JwtAuth:
-  AccessSecret: "ae0536f9-6450-4606-8e13-5a19ed505da0"
-  AccessExpire: 604800  
+  AccessSecret: "lxj-whl-zht-tzy"
+  # 24小时
+  AccessExpire: 86400
+  # 7天
+  RefreshExpire: 604800
+  Issuer: "Four-swordsmen"
 
 FTP:
   ServerAddr: "1.12.58.218:21"
@@ -12,11 +16,11 @@ FTP:
   Pwd: "74563jkas"
 
 Mysql:
-  host: "hymsk.asia"
-  port: "3306"
-  user: "tiktok_user"
-  pwd: "tiktok_passwd_2024"
-  dbname: "TikTok"
-  max_open_conns: 200
-  max_idle_conns: 50
+  Host: "hymsk.asia"
+  Port: "3306"
+  User: "tiktok_user"
+  Pwd: "tiktok_passwd_2024"
+  DBname: "TikTok"
+  Max_open_conns: 200
+  Max_idle_conns: 50
 
