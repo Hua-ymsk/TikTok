@@ -1,0 +1,1 @@
+2023-01-26T20:30:22.122+0800	INFO	middleware/logger.go:79	/douyin/relation/friend/list	{"status": 200, "method": "GET", "path": "/douyin/relation/friend/list", "query": "", "cost": 3.5683834}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"tiktok/dao"
 	"tiktok/dao/mysql"
+	"tiktok/middleware"
 	"tiktok/router"
 	"tiktok/setting"
 )
@@ -13,6 +14,11 @@ func main() {
 	// 加载config
 	if err := setting.Init(); err != nil {
 		fmt.Println("load config err:", err)
+	}
+	// logger初始化
+	if err := middleware.InitLogger(); err != nil {
+		fmt.Println("init logger err:", err)
+		return
 	}
 	// 原生sql
 	if err := dao.Connect(); err != nil {

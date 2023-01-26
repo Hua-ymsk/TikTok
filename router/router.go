@@ -8,12 +8,15 @@ import (
 )
 
 var (
-	videoAPI = &controller.VideoAPI{}
+	videoAPI    = &controller.VideoAPI{}
 	relationAPI = &controller.RelationAPI{}
 )
 
 func InitRouter() *gin.Engine {
 	r := gin.New()
+	// 全局应用logger和recover中间件
+	r.Use(middleware.GinLogger, middleware.GinRecover(true))
+	
 	apiRouter := r.Group("/douyin")
 	{
 		// video apis
@@ -33,6 +36,6 @@ func InitRouter() *gin.Engine {
 			relation.GET("/friend/list", relationAPI.FriendList)
 		}
 	}
-	
+
 	return r
 }
