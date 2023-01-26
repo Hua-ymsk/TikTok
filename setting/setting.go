@@ -14,6 +14,7 @@ type AppConfig struct {
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*JwtConfig   `mapstructure:"JwtAuth"`
+	*FtpConfig `mapstructure:"FTP"`
 }
 
 type LogConfig struct{}
@@ -36,6 +37,12 @@ type JwtConfig struct {
 	RefreshExpire string `mapstructure:"RefreshExpire"`
 	Issuer string `mapstructure:"Issuer"`
 } 
+
+type FtpConfig struct {
+	ServerAddr string `mapstructure:"ServerAddr"`
+	Name string `mapstructure:"Name"`
+	Pwd string `mapstructure:"Pwd"`
+}
 
 var Conf = new(AppConfig)
 
