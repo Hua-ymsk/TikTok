@@ -2,6 +2,7 @@ package dao
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -20,7 +21,7 @@ func UserExist(Token string) (userId string, err error) {
 	if err != nil {
 		return "", fmt.Errorf("token resolution error: %w", err)
 	}
-	sqlStatement := "SELECT * FROM Users WHERE id=?;"
+	sqlStatement := "SELECT * FROM users WHERE id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return "", fmt.Errorf("select init error: %w", err)
@@ -31,7 +32,7 @@ func UserExist(Token string) (userId string, err error) {
 	}
 	defer res.Close()
 	if res.Next() == false {
-		return "", fmt.Errorf("user not exist error: %w", err)
+		return "", errors.New("user not exist error")
 	}
 	return Token, nil
 }
@@ -46,7 +47,7 @@ func FollowExist(UserId string, ToUserId string) (exist bool, err error) {
 	if err != nil {
 		return false, fmt.Errorf("parameter error: %w", err)
 	}
-	sqlStatement := "SELECT * FROM Follows WHERE following_user_id=? and followed_user_id=?;"
+	sqlStatement := "SELECT * FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return false, fmt.Errorf("select init error: %w", err)
@@ -72,7 +73,7 @@ func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) 
 	if err != nil {
 		return fmt.Errorf("parameter error: %w", err)
 	}
-	sqlStatement := "INSERT INTO Follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
+	sqlStatement := "INSERT INTO follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("insert init error: %w", err)
@@ -94,7 +95,7 @@ func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error
 	if err != nil {
 		return fmt.Errorf("parameter error: %w", err)
 	}
-	sqlStatement := "UPDATE Follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
+	sqlStatement := "UPDATE follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("update init error: %w", err)
@@ -116,7 +117,7 @@ func DeleteFollow(UserId string, ToUserId string) (err error) {
 	if err != nil {
 		return fmt.Errorf("parameter error: %w", err)
 	}
-	sqlStatement := "DELETE FROM Follows WHERE following_user_id=? and followed_user_id=?;"
+	sqlStatement := "DELETE FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("delete init error: %w", err)
@@ -136,15 +137,15 @@ func SelectFollowList(UserId string) (*sql.Rows, error) {
 	}
 	sqlStatement :=
 		`SELECT
-			Users.id,
-			Users.user_name,
+			users.id,
+			users.user_name,
 			fans,
 			follows,
 			1 is_followed
 		FROM
-			Users
-			LEFT JOIN Follows f ON Users.id = f.followed_user_id
-			LEFT JOIN Follows d ON Users.id = f.following_user_id 
+			users
+			LEFT JOIN follows f ON users.id = f.followed_user_id
+			LEFT JOIN follows d ON users.id = f.following_user_id 
 		WHERE
 			f.following_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
@@ -166,16 +167,16 @@ func SelectFollowerList(UserId string) (*sql.Rows, error) {
 	}
 	sqlStatement :=
 		`SELECT
-			Users.id,
-			Users.user_name,
+			users.id,
+			users.user_name,
 			fans,
 			follows,
 		IF
 			(f.relationship= ?, 1, 0) AS is_followed 
 		FROM
-			Users
-			LEFT JOIN Follows f ON Users.id = f.following_user_id 
-			LEFT JOIN Follows d ON Users.id = f.followed_user_id
+			users
+			LEFT JOIN follows f ON users.id = f.following_user_id 
+			LEFT JOIN follows d ON users.id = f.followed_user_id
 		WHERE
 			f.followed_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
@@ -197,15 +198,15 @@ func SelectFriendList(UserId string) (*sql.Rows, error) {
 	}
 	sqlStatement :=
 		`SELECT
-			Users.id,
-			Users.user_name,
+			users.id,
+			users.user_name,
 			fans,
 			follows,
 			1 is_followed
 		FROM
-			Users
-			LEFT JOIN Follows f ON Users.id = f.followed_user_id
-			LEFT JOIN Follows d ON Users.id = f.following_user_id 
+			users
+			LEFT JOIN follows f ON users.id = f.followed_user_id
+			LEFT JOIN follows d ON users.id = f.following_user_id 
 		WHERE
 			f.following_user_id = ? and f.relationship = 1;`
 	stmt, err := db.Prepare(sqlStatement)

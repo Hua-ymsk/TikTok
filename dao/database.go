@@ -9,7 +9,7 @@ import (
 var db *sql.DB
 
 func Connect() (err error) {
-	db, err = sql.Open("mysql", "tiktok_user:tiktok_passwd_2024@tcp(101.33.204.176:3306)/TikTok?charset=utf8")
+	db, err = sql.Open("mysql", "tiktok_user:tiktok_passwd_2024@tcp(101.33.204.176:3306)/tiktok?charset=utf8")
 	if err != nil {
 		return
 	}
