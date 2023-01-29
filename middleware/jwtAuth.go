@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"errors"
-	"net/http"
 	"strconv"
+	"tiktok/common/result"
 	"tiktok/setting"
 	"time"
 
@@ -35,40 +35,26 @@ var (
 	ErrorInvalidToken = errors.New("invalid token")
 )
 
-type Response struct {
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg"`
-}
-
 // JWTAuthMiddleware 基于JWT的认证中间件
 func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		tokenStr := c.Query("token")
 		mc, err := ParseToken(tokenStr)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, Response{
-				StatusCode: -1,
-				StatusMsg:  "令牌无效或过期",
-			})
+			result.ResponseErr(c, "令牌无效或过期")
 			c.Abort()
 			return
 		}
 		// 验证user_id
 		user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
 		if user_id != mc.UserID {
-			c.JSON(http.StatusUnauthorized, Response{
-				StatusCode: -1,
-				StatusMsg: "令牌无效",
-			})
+			result.ResponseErr(c, "令牌无效")
 			c.Abort()
 			return
 		}
 		// 验证签发人
 		if mc.Issuer != ISSUER {
-			c.JSON(http.StatusUnauthorized, Response{
-				StatusCode: -1,
-				StatusMsg: "令牌无效",
-			})
+			result.ResponseErr(c, "令牌无效")
 			c.Abort()
 			return
 		}
