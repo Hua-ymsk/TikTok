@@ -23,7 +23,7 @@ type MyClaims struct {
 var (
 	jwtConfig     = new(setting.JwtConfig)
 	ISSUER        = jwtConfig.Issuer
-	SECRET        = jwtConfig.AccessSecret
+	SECRET        = []byte(jwtConfig.AccessSecret)
 	ACCESSEXPIRE  = jwtConfig.AccessExpire
 	REFRESHEXPIRE = jwtConfig.RefreshExpire
 )

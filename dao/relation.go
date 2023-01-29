@@ -7,36 +7,32 @@ import (
 	"strconv"
 )
 
-// TokenResolution 解析Token获得userId
-func TokenResolution(Token string) (userId string, err error) {
-	//测试用
-	userId, err = Token, nil
-	////正式使用
-	//claims, err := middleware.ParseToken(Token)
-	//userId = claims.UserID
-	return
-}
+//// TokenResolution 解析Token获得userId
+//func TokenResolution(Token string) (userId string, err error) {
+//	//测试用
+//	userId, err = Token, nil
+//	////正式使用
+//	//claims, err := middleware.ParseToken(Token)
+//	//userId = claims.UserID
+//	return
+//}
 
-// UserExist 解析Token获得userId,并检验该Token对应用户是否存在
-func UserExist(Token string) (userId string, err error) {
-	userId, err = TokenResolution(Token)
-	if err != nil {
-		return "", fmt.Errorf("token resolution error: %w", err)
-	}
+// UserExist 检验该UserId对应用户是否存在
+func UserExist(UserId string) (err error) {
 	sqlStatement := "SELECT * FROM users WHERE id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return "", fmt.Errorf("select init error: %w", err)
+		return fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId)
+	res, err := stmt.Query(UserId)
 	if err != nil {
-		return "", fmt.Errorf("select execute error: %w", err)
+		return fmt.Errorf("select execute error: %w", err)
 	}
 	defer res.Close()
 	if res.Next() == false {
-		return "", errors.New("user not exist error")
+		return errors.New("user not exist error")
 	}
-	return Token, nil
+	return nil
 }
 
 // FollowExist 查询关注信息是否存在

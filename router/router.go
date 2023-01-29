@@ -20,19 +20,19 @@ func InitRouter() *gin.Engine {
 	{
 		// video apis
 		apiRouter.GET("/feed", videoAPI.FeedHandler)
-		video := apiRouter.Group("/publish")
+		video := apiRouter.Group("/publish/")
 		video.GET("/list", videoAPI.PublishListHandler)
 		video.Use(middleware.JWTAuth())
 		{
 			video.POST("/action", videoAPI.PublishHandler)
 		}
 		// extra apis - II
-		relation := apiRouter.Group("/relation")
+		relation := apiRouter.Group("/relation/")
 		{
-			relation.POST("/action", relationAPI.RelationAction)
-			relation.GET("/follow/list", relationAPI.FollowList)
-			relation.GET("/follower/list", relationAPI.FollowerList)
-			relation.GET("/friend/list", relationAPI.FriendList)
+			relation.POST("/action/", relationAPI.RelationAction)
+			relation.GET("/follow/list/", relationAPI.FollowList)
+			relation.GET("/follower/list/", relationAPI.FollowerList)
+			relation.GET("/friend/list/", relationAPI.FriendList)
 		}
 	}
 

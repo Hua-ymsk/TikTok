@@ -27,90 +27,76 @@ type RelationResponse struct { //关注用户信息
 }
 
 // DoFollow 执行关注，先查询是否有对方关注信息存在，若存在修改标记并插入一条新信息；否则只插入一条新信息
-func DoFollow(Token string, ToUserId string) (relationResponse RelationResponse) {
-	//此处转换Token并查询数据库观察用户是否存在
-	if userId, err := dao.TokenResolution(Token); err == nil {
-		//查询关注信息是否存在
-		exist, err := dao.FollowExist(userId, ToUserId)
-		if err != nil { //检验出现错误
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-		}
-		if exist {
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow exist"))}
-		}
-		//查询对方关注信息是否存在
-		exist, err = dao.FollowExist(ToUserId, userId)
-		if err != nil { //检验出现错误
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-		}
-		if exist {
-			//有对方信息存在，修改标记并进行插入(0为未互关，1为已互关)
-			e := dao.UpdInsRelation(userId, ToUserId)
-			if e != nil {
-				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
-			}
-		} else {
-			//无对方信息存在，插入新信息(0为未互关，1为已互关)
-			e := dao.InsertFollow(userId, ToUserId, 0)
-			if e != nil {
-				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
-			}
-		}
-		relationResponse = RelationResponse{StatusCode: 0, StatusMsg: "True"}
-	} else {
-		relationResponse = RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("token resolution error"))}
+func DoFollow(UserId string, ToUserId string) (relationResponse RelationResponse) {
+	//查询关注信息是否存在
+	exist, err := dao.FollowExist(UserId, ToUserId)
+	if err != nil { //检验出现错误
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 	}
+	if exist {
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow exist"))}
+	}
+	//查询对方关注信息是否存在
+	exist, err = dao.FollowExist(ToUserId, UserId)
+	if err != nil { //检验出现错误
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
+	}
+	if exist {
+		//有对方信息存在，修改标记并进行插入(0为未互关，1为已互关)
+		e := dao.UpdInsRelation(UserId, ToUserId)
+		if e != nil {
+			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+		}
+	} else {
+		//无对方信息存在，插入新信息(0为未互关，1为已互关)
+		e := dao.InsertFollow(UserId, ToUserId, 0)
+		if e != nil {
+			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+		}
+	}
+	relationResponse = RelationResponse{StatusCode: 0, StatusMsg: "True"}
 	return
 }
 
 // DoUnFollow 执行取消关注，先查询是否有对方关注信息存在，若存在修改标记并删除自己的关注信息；否则只删除自己的关注信息
-func DoUnFollow(Token string, ToUserId string) (relationResponse RelationResponse) {
-	//此处先转换Token并查询数据库观察用户是否存在
-	if userId, err := dao.TokenResolution(Token); err == nil {
-		//查询关注信息是否存在
-		exist, err := dao.FollowExist(userId, ToUserId)
-		if err != nil { //检验出现错误
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-		}
-		if !exist {
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow not exist"))}
-		}
-		//查询对方关注信息是否存在
-		exist, err = dao.FollowExist(ToUserId, userId)
-		if err != nil { //检验出现错误
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-		}
-		if exist {
-			//有对方信息存在，修改标记(0为未互关，1为已互关)
-			e := dao.UpdDelRelation(ToUserId, userId)
-			if e != nil {
-				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
-			}
-		} else {
-			//无对方信息存在，执行删除
-			e := dao.DeleteFollow(userId, ToUserId)
-			if e != nil {
-				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
-			}
-		}
-		relationResponse = RelationResponse{StatusCode: 0, StatusMsg: "True"}
-	} else {
-		relationResponse = RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("token resolution error"))}
+func DoUnFollow(UserId string, ToUserId string) (relationResponse RelationResponse) {
+	//查询关注信息是否存在
+	exist, err := dao.FollowExist(UserId, ToUserId)
+	if err != nil { //检验出现错误
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 	}
+	if !exist {
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow not exist"))}
+	}
+	//查询对方关注信息是否存在
+	exist, err = dao.FollowExist(ToUserId, UserId)
+	if err != nil { //检验出现错误
+		return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
+	}
+	if exist {
+		//有对方信息存在，修改标记(0为未互关，1为已互关)
+		e := dao.UpdDelRelation(ToUserId, UserId)
+		if e != nil {
+			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+		}
+	} else {
+		//无对方信息存在，执行删除
+		e := dao.DeleteFollow(UserId, ToUserId)
+		if e != nil {
+			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+		}
+	}
+	relationResponse = RelationResponse{StatusCode: 0, StatusMsg: "True"}
 	return
 }
 
 // SelectFollowList 查询关注信息列表并格式化转换成JSON格式
-func SelectFollowList(UserId string, Token string) (followListResponse RelationListResponse) {
+func SelectFollowList(UserId string) (followListResponse RelationListResponse) {
 	var followUserList = make([]FollowUser, 0, 100)
-	//验证Token
-	userId, err := dao.UserExist(Token)
+	//验证用户存在
+	err := dao.UserExist(UserId)
 	if err != nil {
 		followListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: followUserList}
-		return
-	}
-	if userId != UserId {
-		followListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", errors.New("token authentication failed")), User: followUserList}
 		return
 	}
 	//执行查询
@@ -143,16 +129,12 @@ func SelectFollowList(UserId string, Token string) (followListResponse RelationL
 }
 
 // SelectFollowerList 查询粉丝信息列表并格式化转换成JSON格式
-func SelectFollowerList(UserId string, Token string) (followerListResponse RelationListResponse) {
+func SelectFollowerList(UserId string) (followerListResponse RelationListResponse) {
 	var followerUserList = make([]FollowUser, 0, 100)
-	//验证Token
-	userId, err := dao.UserExist(Token)
+	//验证用户存在
+	err := dao.UserExist(UserId)
 	if err != nil {
 		followerListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: followerUserList}
-		return
-	}
-	if userId != UserId {
-		followerListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", errors.New("token authentication failed")), User: followerUserList}
 		return
 	}
 	//执行查询
@@ -185,16 +167,12 @@ func SelectFollowerList(UserId string, Token string) (followerListResponse Relat
 }
 
 // SelectFriendList 查询互关信息列表并格式化转换成JSON格式
-func SelectFriendList(UserId string, Token string) (friendListResponse RelationListResponse) {
+func SelectFriendList(UserId string) (friendListResponse RelationListResponse) {
 	var friendUserList = make([]FollowUser, 0, 100)
-	//验证Token
-	userId, err := dao.UserExist(Token)
+	//验证用户存在
+	err := dao.UserExist(UserId)
 	if err != nil {
 		friendListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
-		return
-	}
-	if userId != UserId {
-		friendListResponse = RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", errors.New("token authentication failed")), User: friendUserList}
 		return
 	}
 	//执行查询
