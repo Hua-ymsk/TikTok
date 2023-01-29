@@ -1,0 +1,32 @@
+name: "sample-tiktok"
+mode: "dev"
+port: 9090
+start_time: "2022-02-09"
+machine_id: 1
+
+JwtAuth:
+  AccessSecret: "lxj-whl-zht-tzy"
+  # 24小时
+  AccessExpire: 86400
+  # 7天
+  RefreshExpire: 604800
+  Issuer: "Four-swordsmen"
+
+FTP:
+  ServerAddr: "1.12.58.218:21"
+  Name: "test1"
+  Pwd: "74563jkas"
+
+Mysql:
+  Host: "hymsk.asia"
+  Port: "3306"
+  User: "tiktok_user"
+  Pwd: "tiktok_passwd_2024"
+  DBname: "tiktok"
+  Max_open_conns: 200
+  Max_idle_conns: 50
+
+Video:
+  PlayUrlPrefix: "E:/Project/GoProject/tiktok-static/static/videos/"
+  CoverUrlPrefix: "E:/Project/GoProject/tiktok-static/static/covers/"
+

@@ -6,7 +6,9 @@ import (
 	"tiktok/logic"
 )
 
-func RelationAction(c *gin.Context) {
+type RelationAPI struct{}
+
+func (api *RelationAPI) RelationAction(c *gin.Context) {
 	/*
 		query:
 			token<string>:用户鉴权token
@@ -28,7 +30,7 @@ func RelationAction(c *gin.Context) {
 	}
 }
 
-func FollowList(c *gin.Context) { //
+func (api *RelationAPI) FollowList(c *gin.Context) { //
 	/*
 		query:
 			user_id<string>:用户id
@@ -49,7 +51,7 @@ func FollowList(c *gin.Context) { //
 	c.JSON(http.StatusOK, response)
 }
 
-func FollowerList(c *gin.Context) { //
+func (api *RelationAPI) FollowerList(c *gin.Context) { //
 	/*
 		query:
 			user_id<string>:用户id
@@ -70,7 +72,7 @@ func FollowerList(c *gin.Context) { //
 	c.JSON(http.StatusOK, response)
 }
 
-func FriendList(c *gin.Context) { //
+func (api *RelationAPI) FriendList(c *gin.Context) { //
 	/*
 		query:
 			user_id<string>:用户id
