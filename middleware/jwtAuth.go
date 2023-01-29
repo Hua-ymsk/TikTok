@@ -69,7 +69,7 @@ func keyFunc(_ *jwt.Token) (i interface{}, err error) {
 }
 
 // GenToken 生成access token 和 refresh token
-func GenToken(userID int64, username string) (aToken, rToken string, err error) {
+func GenToken(userID int64) (aToken, rToken string, err error) {
 	// 创建一个自己的声明
 	AccessClaims := MyClaims{
 		userID,

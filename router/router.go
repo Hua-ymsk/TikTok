@@ -11,6 +11,7 @@ var (
 	videoAPI    = &controller.VideoAPI{}
 	relationAPI = &controller.RelationAPI{}
 	favoriteAPI = &controller.FavoriteAPI{}
+	userAPI     = &controller.UserAPI{}
 )
 
 func InitRouter() *gin.Engine {
@@ -20,6 +21,7 @@ func InitRouter() *gin.Engine {
 
 	apiRouter := r.Group("/douyin")
 	{
+
 		// video apis
 		apiRouter.GET("/feed", videoAPI.FeedHandler)
 		video := apiRouter.Group("/pulish")
@@ -42,6 +44,13 @@ func InitRouter() *gin.Engine {
 			favorite.POST("/action", favoriteAPI.FavoriteAction)
 			favorite.GET("/list", favoriteAPI.FavoriteList)
 		}
+		//user
+		user := apiRouter.Group("/user")
+		{
+			user.POST("/register", userAPI.Register)
+			user.POST("/login", userAPI.Login)
+		}
+
 	}
 
 	return r
