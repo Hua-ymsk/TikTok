@@ -18,7 +18,7 @@ import (
 
 var lg *zap.Logger
 
-func InitLogger() (err error) {
+func InitLogger(dev bool) (err error) {
 	// 配置zapcore
 	encoder := getEncoder()
 	writeSyncer := getLogWriter()
@@ -26,7 +26,7 @@ func InitLogger() (err error) {
 	err = l.UnmarshalText([]byte("debug"))
 	
 	core := zapcore.NewCore(encoder, writeSyncer, zapcore.DebugLevel)
-	if true {
+	if dev {
 		// 进入开发模式，日志输出到终端
 		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		core = zapcore.NewTee(		// 多个输出
