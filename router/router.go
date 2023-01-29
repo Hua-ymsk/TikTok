@@ -16,16 +16,16 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	// 全局应用logger和recover中间件
 	r.Use(middleware.GinLogger, middleware.GinRecover(true))
-	
 	apiRouter := r.Group("/douyin")
 	{
 		// video apis
 		apiRouter.GET("/feed", videoAPI.FeedHandler)
-		video := apiRouter.Group("/pulish")
+		video := apiRouter.Group("/publish")
+		video.GET("/list", videoAPI.PublishListHandler)
 		video.Use(middleware.JWTAuth())
 		{
 			video.POST("/action", videoAPI.PublishHandler)
-			video.GET("/list", videoAPI.PublishListHandler)
+			
 		}
 		// extra apis - II
 		relation := apiRouter.Group("/relation")
