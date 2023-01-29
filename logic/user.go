@@ -22,7 +22,7 @@ func (logic *UserRegisterLogic) RegisterUser(c *gin.Context) utils.Response {
 	//获取注册数据
 	user := models.User{
 		UserName: c.Query("username"),
-		PassWord: c.Query("password"),
+		PassWord: utils.Md5(c.Query("password")),
 		NickName: c.Query("nickname"),
 	}
 	//检查用户名和密码
@@ -50,9 +50,10 @@ func (logic *UserRegisterLogic) RegisterUser(c *gin.Context) utils.Response {
 
 func (logic *UserLoginLogic) LoginUser(c *gin.Context) utils.Response {
 	//登录
+
 	user := models.User{
 		UserName: c.Query("username"),
-		PassWord: c.Query("password"),
+		PassWord: utils.Md5(c.Query("password")),
 	}
 	//检查用户名和密码
 	if len(user.UserName) == 0 || len(user.PassWord) == 0 {
