@@ -15,7 +15,7 @@ type PublishListReq struct {
 
 type PublishListResp struct {
 	StatusCode int64   `json:"status_code"`
-	StatusMsg  *string `json:"status_msg"`
+	StatusMsg  string `json:"status_msg"`
 	VideoList  []Video `json:"video_list"`
 }
 
