@@ -9,9 +9,11 @@ import (
 
 // TokenResolution 解析Token获得userId
 func TokenResolution(Token string) (userId string, err error) {
-	//暂不验证Token
+	//测试用
 	userId, err = Token, nil
-	//
+	////正式使用
+	//claims, err := middleware.ParseToken(Token)
+	//userId = claims.UserID
 	return
 }
 
@@ -85,8 +87,8 @@ func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) 
 	return nil
 }
 
-// ChangeRelation 修改关注信息
-func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error) {
+// UpdateRelation 修改关注信息
+func UpdateRelation(UserId string, ToUserId string, Relationship int) (err error) {
 	userId, err := strconv.Atoi(UserId)
 	if err != nil {
 		return fmt.Errorf("parameter error: %w", err)
@@ -125,6 +127,62 @@ func DeleteFollow(UserId string, ToUserId string) (err error) {
 	_, err = stmt.Exec(userId, toUserId)
 	if err != nil {
 		return fmt.Errorf("delete execute error: %w", err)
+	}
+	return nil
+}
+
+// UpdInsRelation 关注时，有对方信息存在，执行修改标记并进行插入
+func UpdInsRelation(UserId string, ToUserId string) (err error) {
+	//修改标记
+	begin, _ := db.Begin()
+	err = UpdateRelation(ToUserId, UserId, 1)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	//插入信息
+	err = InsertFollow(UserId, ToUserId, 1)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	err = begin.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdDelRelation 取消关注时，有对方信息存在，执行修改标记并进行删除
+func UpdDelRelation(UserId string, ToUserId string) (err error) {
+	//修改标记
+	begin, _ := db.Begin()
+	err = UpdateRelation(ToUserId, UserId, 0)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	//插入信息
+	err = DeleteFollow(UserId, ToUserId)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	err = begin.Commit()
+	if err != nil {
+		return err
 	}
 	return nil
 }

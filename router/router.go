@@ -25,7 +25,6 @@ func InitRouter() *gin.Engine {
 		video.Use(middleware.JWTAuth())
 		{
 			video.POST("/action", videoAPI.PublishHandler)
-
 		}
 		// extra apis - II
 		relation := apiRouter.Group("/relation")

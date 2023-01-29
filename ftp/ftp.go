@@ -16,7 +16,7 @@ func Init(cfg *setting.FtpConfig) (err error) {
 		panic(fmt.Errorf("connect to ftp server err:%v", err))
 	}
 	// 登录
-	if err = FTPServer.Login(cfg.Name, cfg.Pwd); err != nil {
+	if err = FTPServer.Login(cfg.UserName, cfg.Pwd); err != nil {
 		panic(fmt.Errorf("login ftp server err:%v", err))
 	}
 

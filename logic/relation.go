@@ -45,13 +45,7 @@ func DoFollow(Token string, ToUserId string) (relationResponse RelationResponse)
 		}
 		if exist {
 			//有对方信息存在，修改标记并进行插入(0为未互关，1为已互关)
-			//修改标记
-			e := dao.ChangeRelation(ToUserId, userId, 1)
-			if e != nil {
-				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
-			}
-			//插入信息
-			e = dao.InsertFollow(userId, ToUserId, 1)
+			e := dao.UpdInsRelation(userId, ToUserId)
 			if e != nil {
 				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
 			}
@@ -88,15 +82,16 @@ func DoUnFollow(Token string, ToUserId string) (relationResponse RelationRespons
 		}
 		if exist {
 			//有对方信息存在，修改标记(0为未互关，1为已互关)
-			e := dao.ChangeRelation(ToUserId, userId, 0)
+			e := dao.UpdDelRelation(ToUserId, userId)
 			if e != nil {
 				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
 			}
-		}
-		//不管信息是否存在，执行删除并进行删除
-		e := dao.DeleteFollow(userId, ToUserId)
-		if e != nil {
-			return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+		} else {
+			//无对方信息存在，执行删除
+			e := dao.DeleteFollow(userId, ToUserId)
+			if e != nil {
+				return RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
+			}
 		}
 		relationResponse = RelationResponse{StatusCode: 0, StatusMsg: "True"}
 	} else {
