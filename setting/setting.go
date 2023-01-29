@@ -10,11 +10,14 @@ type AppConfig struct {
 	Mode         string `mapstructure:"mode"`
 	Port         int    `mapstructure:"port"`
 	Name         string `mapstructure:"name"`
+	StartTime    string `mapstructure:"start_time"`
+	MachineID    int    `mapstructure:"machine_id"`
 	*LogConfig   `mapstructure:"log"`
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*JwtConfig   `mapstructure:"JwtAuth"`
 	*FtpConfig `mapstructure:"FTP"`
+	*VideoConfig `mapstructure:"Video"`
 }
 
 type LogConfig struct{}
@@ -40,8 +43,13 @@ type JwtConfig struct {
 
 type FtpConfig struct {
 	ServerAddr string `mapstructure:"ServerAddr"`
-	Name string `mapstructure:"Name"`
+	UserName string `mapstructure:"Name"`
 	Pwd string `mapstructure:"Pwd"`
+}
+
+type VideoConfig struct {
+	PlayUrlPrefix string `mapstructure:"PlayUrlPrefix"`
+	CoverUrlPrefix string `mapstructure:"CoverUrlPrefix"`
 }
 
 var Conf = new(AppConfig)

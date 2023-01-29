@@ -1,6 +1,8 @@
 name: "sample-tiktok"
 mode: "dev"
 port: 9090
+start_time: "2022-02-09"
+machine_id: 1
 
 JwtAuth:
   AccessSecret: "lxj-whl-zht-tzy"
@@ -12,7 +14,7 @@ JwtAuth:
 
 FTP:
   ServerAddr: "1.12.58.218:21"
-  Name: "tiktok"
+  Name: "test1"
   Pwd: "74563jkas"
 
 Mysql:
@@ -20,7 +22,11 @@ Mysql:
   Port: "3306"
   User: "tiktok_user"
   Pwd: "tiktok_passwd_2024"
-  DBname: "TikTok"
+  DBname: "tiktok"
   Max_open_conns: 200
   Max_idle_conns: 50
+
+Video:
+  PlayUrlPrefix: "E:/Project/GoProject/tiktok-static/static/videos/"
+  CoverUrlPrefix: "E:/Project/GoProject/tiktok-static/static/covers/"
 
