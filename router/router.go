@@ -47,6 +47,7 @@ func InitRouter() *gin.Engine {
 		//user
 		user := apiRouter.Group("/user")
 		{
+			user.GET("", middleware.JWTAuth(), userAPI.UserInfo)
 			user.POST("/register", userAPI.Register)
 			user.POST("/login", userAPI.Login)
 		}
