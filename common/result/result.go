@@ -25,3 +25,9 @@ func ResponseSuccess(c *gin.Context) {
 		StatusMsg:  "请求成功",
 	})
 }
+func UserResponseSuccess(c *gin.Context) {
+	c.JSON(http.StatusOK, Response{
+		StatusCode: 0,
+		StatusMsg:  "请求成功",
+	})
+}

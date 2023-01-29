@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"tiktok/common/result"
 	"tiktok/setting"
@@ -23,10 +24,10 @@ type MyClaims struct {
 var (
 	jwtConfig     = new(setting.JwtConfig)
 	ISSUER        = jwtConfig.Issuer
-	SECRET        = jwtConfig.AccessSecret
 	ACCESSEXPIRE  = jwtConfig.AccessExpire
 	REFRESHEXPIRE = jwtConfig.RefreshExpire
 )
+var SECRET = []byte("tiktok_jwt_key")
 
 // 定义错误
 var (
@@ -69,7 +70,7 @@ func keyFunc(_ *jwt.Token) (i interface{}, err error) {
 }
 
 // GenToken 生成access token 和 refresh token
-func GenToken(userID int64, username string) (aToken, rToken string, err error) {
+func GenToken(userID int64) (aToken string, rToken string, err error) {
 	// 创建一个自己的声明
 	AccessClaims := MyClaims{
 		userID,
@@ -81,7 +82,8 @@ func GenToken(userID int64, username string) (aToken, rToken string, err error) 
 	}
 	// 加密并获得完整的编码后的字符串token
 	aToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, AccessClaims).SignedString(SECRET)
-
+	fmt.Println(aToken)
+	fmt.Println(err)
 	// refresh token 不需要存任何自定义数据
 	RefreshClaims := jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(time.Duration(viper.GetInt(REFRESHEXPIRE))).Unix(),
