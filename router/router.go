@@ -21,12 +21,12 @@ func InitRouter() *gin.Engine {
 		// video apis
 		apiRouter.GET("/feed", videoAPI.FeedHandler)
 		video := apiRouter.Group("/publish")
-		video.GET("/list", videoAPI.PublishListHandler)
 		video.Use(middleware.JWTAuth())
 		{
 			video.POST("/action", videoAPI.PublishHandler)
-			
+			video.GET("/list", videoAPI.PublishListHandler)
 		}
+
 		// extra apis - II
 		relation := apiRouter.Group("/relation")
 		{
