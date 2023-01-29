@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 )
 
 type VideoLogic struct{}
@@ -44,11 +45,10 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	}
 	// 保存（200ms）
 	video := &models.Video{
-		// UserID:    c.GetInt64("user_id"),
-		UserID:    1,
-		Play_url:  dst,
-		Cover_url: cover_url,
-		Titile:    title,
+		UserID:    c.GetInt64("user_id"),
+		PlayURL:  dst,
+		CoverURL: cover_url,
+		Title:    title,
 		TimeStamp: time.Now().Unix(),
 	}
 	if err := mysql.SaveVideo(video); err != nil {
@@ -62,7 +62,12 @@ func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.
 	// 不该每个video中都要求author信息，数据冗杂
 	// 暂不查询author
 
-	// videos := mysql.PublishList(user_id)
-	mysql.ChekFollow(1,1)
+	videos, err := mysql.PublishList(user_id)
+	if err := copier.Copy(&list, &videos); err != nil {
+		fmt.Println("copy err:", err)
+		return nil, err
+	}
+	fmt.Println("list: ", list)
+
 	return
 }

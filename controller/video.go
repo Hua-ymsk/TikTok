@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"strconv"
 	"tiktok/common/result"
 	"tiktok/logic"
@@ -45,10 +46,16 @@ func (api *VideoAPI) PublishListHandler(c *gin.Context) {
 		result.ResponseErr(c, "参数错误")
 		return
 	}
-	if _, err := l.VideoList(c, user_id); err != nil {
+	 videoList, err := l.VideoList(c, user_id)
+	if err != nil {
 		result.ResponseErr(c, "查询错误")
 		return
 	}
+	c.JSON(http.StatusOK, types.PublishListResp{
+		StatusCode: 0,
+		StatusMsg: "请求成功",
+		VideoList: videoList,
+	})
 
 	return
 }
