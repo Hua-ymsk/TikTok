@@ -73,5 +73,18 @@ func SelectUserInfo(userId string) (userName string, followCount, followerCount 
 		return "", 0, 0, false, fmt.Errorf("user no exist")
 	}
 	return user.UserName, user.Follows, user.Fans, user.IsFollow, nil
+}
 
+// SelectCommentList 查询评论列表
+func SelectCommentList(videoId string) ([]*models.Comment, error) {
+	videoIdInt, errVint := strconv.Atoi(videoId)
+	if errVint != nil {
+		return nil, fmt.Errorf("string to int error%v", errVint)
+	}
+	var comments = make([]*models.Comment, 0)
+	res := db.Where("video_id = ?", videoIdInt).Find(&comments)
+	if res.RowsAffected == 0 {
+		return nil, fmt.Errorf("select comment error")
+	}
+	return comments, nil
 }

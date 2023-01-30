@@ -12,3 +12,9 @@ type Comment struct {
 	ID         int64  `json:"id"`          // 评论id
 	User       User   `json:"user"`        // 评论用户信息
 }
+
+type CommentListResp struct {
+	CommentList []Comment `json:"comment_list"` // 评论列表
+	StatusCode  int64     `json:"status_code"`  // 状态码，0-成功，其他值-失败
+	StatusMsg   string    `json:"status_msg"`   // 返回状态描述
+}

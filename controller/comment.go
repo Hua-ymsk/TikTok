@@ -9,7 +9,7 @@ import (
 type CommentAPI struct {
 }
 
-func (a CommentAPI) CommentAction(c *gin.Context) {
+func (api *CommentAPI) CommentAction(c *gin.Context) {
 	/*
 			query:
 				token<string>:用户鉴权token
@@ -48,6 +48,26 @@ func (a CommentAPI) CommentAction(c *gin.Context) {
 
 }
 
-func (a CommentAPI) CommentList(c *gin.Context) {
-
+func (api *CommentAPI) CommentList(c *gin.Context) {
+	/*
+		query:
+				video_id<string>:视频id
+				token<string>:用户鉴权token
+			response:
+				status_code<string>:状态码，0-成功，其他值-失败
+		    	status_msg<string|null>:返回状态描述
+		    	comment_list<array[object (Comment) {4}|null>:用户点赞视频列表
+		        	id<int>:评论id
+		            user<object>:评论用户信息
+		                id<int>:用户id
+		                name<string>:用户名称
+		                follow_count<int>:关注总数
+		                follower_count<int>:粉丝总数
+		                is_follow<bool>:true-已关注，false-未关注
+				content<string>:评论内容
+		        create_date<string>:评论发布日期，格式 mm-dd
+	*/
+	videoId := c.Query("video_id")
+	response := logic.DoCommentList(videoId)
+	c.JSON(http.StatusOK, response)
 }

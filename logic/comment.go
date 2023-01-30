@@ -118,3 +118,51 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 		StatusMsg:  "success",
 	}
 }
+
+// DoCommentList 查询评论列表
+func DoCommentList(videoId string) types.CommentListResp {
+	comments, err := mysql.SelectCommentList(videoId)
+	if err != nil {
+		return types.CommentListResp{
+			CommentList: nil,
+			StatusCode:  1,
+			StatusMsg:   fmt.Sprintf("select comment list error:%v", err),
+		}
+	}
+	var commentList = make([]types.Comment, 0, 100)
+	for _, comment := range comments {
+		var commentTemp types.Comment
+		userId := strconv.Itoa(int(comment.UserId))
+		userName, followCount, followerCount, isFollow, err := mysql.SelectUserInfo(userId)
+		if err != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("select userinfo error:%v", err),
+			}
+		}
+		//将时间戳转换为时间
+		commentTime := time.Unix(comment.Timestamp, 0)
+		//将时间格式化为mm:dd
+		commentTimeMonthStr := commentTime.Month().String()
+		//获取day的int类型再转换为字符串
+		commentTimeDayInt := commentTime.Day()
+		commentTimeDayStr := strconv.Itoa(commentTimeDayInt)
+		//合并month和day
+		commentTimeStr := commentTimeMonthStr + ":" + commentTimeDayStr
+		commentTemp.ID = comment.ID
+		commentTemp.User.UserID = comment.UserId
+		commentTemp.User.Name = userName
+		commentTemp.User.FollowCount = followCount
+		commentTemp.User.FollowerCount = followerCount
+		commentTemp.User.IsFollow = isFollow
+		commentTemp.Content = comment.Content
+		commentTemp.CreateDate = commentTimeStr
+		commentList = append(commentList, commentTemp)
+	}
+	return types.CommentListResp{
+		CommentList: commentList,
+		StatusCode:  0,
+		StatusMsg:   "success",
+	}
+}
