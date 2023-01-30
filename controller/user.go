@@ -27,3 +27,12 @@ func (api *UserAPI) Login(c *gin.Context) {
 	response := logiclogin.LoginUser(c)
 	c.JSON(http.StatusOK, response)
 }
+func (api *UserAPI) UserInfo(c *gin.Context) {
+	var logicuserinfo logic.UserInfoLogic
+	err := c.ShouldBind(&logicuserinfo)
+	if err != nil {
+		return
+	}
+	response := logicuserinfo.UserInfo(c)
+	c.JSON(http.StatusOK, response)
+}

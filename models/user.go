@@ -7,4 +7,6 @@ type User struct {
 	NickName string `gorm:"column:nickname"`
 	Fans     int64  `gorm:"column:fans"`
 	Follows  int64  `gorm:"column:follows"`
+	Token    string
+	IsFollow bool
 }
