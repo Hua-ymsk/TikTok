@@ -67,7 +67,7 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 	for res.Next() {
 		var like types.Video
 		err := res.Scan(&like.ID,
-			&like.Author.ID, &like.Author.Name, &like.Author.FollowCount, &like.Author.FollowerCount, &like.Author.IsFollow,
+			&like.Author.UserID, &like.Author.Name, &like.Author.FollowCount, &like.Author.FollowerCount, &like.Author.IsFollow,
 			&like.PlayURL, &like.CoverURL, &like.FavoriteCount, &like.CommentCount, &like.IsFavorite, &like.Title)
 		if err != nil {
 			return types.FavoriteListResp{
