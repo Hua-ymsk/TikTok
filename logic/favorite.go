@@ -3,81 +3,55 @@ package logic
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"tiktok/dao/mysql"
 	"tiktok/types"
 )
 
 // DoLike 执行赞操作
-func DoLike(token, videoId string) types.FavoriteActionResp {
-	//转换token为user_id并查询用户是否存在
-	if userExist, userId, _, err := mysql.QueryUserName(token); err == nil && userExist {
-		userIdStr := strconv.Itoa(int(userId))
-		//查询赞是否存在
-		exist, err := mysql.LikeExist(userIdStr, videoId)
+func DoLike(userId, videoId string) types.FavoriteActionResp {
+	//查询赞是否存在
+	exist, err := mysql.LikeExist(userId, videoId)
+	if err != nil {
+		return types.FavoriteActionResp{
+			StatusCode: 1,
+			StatusMsg:  fmt.Sprintf("select like info error:%v", err),
+		}
+	}
+	//存在则取消赞，不存在则点赞
+	if exist {
+		err := mysql.DeleteLikeInfo(userId, videoId)
 		if err != nil {
 			return types.FavoriteActionResp{
 				StatusCode: 1,
-				StatusMsg:  fmt.Sprintf("select like info error:%v", err),
+				StatusMsg:  fmt.Sprintf("unlike action error:%v", err),
 			}
 		}
-		//存在则取消赞，不存在则点赞
-		if exist {
-			err := mysql.DeleteLikeInfo(userIdStr, videoId)
-			if err != nil {
-				return types.FavoriteActionResp{
-					StatusCode: 1,
-					StatusMsg:  fmt.Sprintf("unlike action error:%v", err),
-				}
-			}
+		return types.FavoriteActionResp{
+			StatusCode: 0,
+			StatusMsg:  "unlike action",
+		}
+	} else {
+		err := mysql.InsertLikeInfo(userId, videoId)
+		if err != nil {
 			return types.FavoriteActionResp{
-				StatusCode: 0,
-				StatusMsg:  "unlike action",
-			}
-		} else {
-			err := mysql.InsertLikeInfo(userIdStr, videoId)
-			if err != nil {
-				return types.FavoriteActionResp{
-					StatusCode: 1,
-					StatusMsg:  fmt.Sprintf("like action error:%v", err),
-				}
-			}
-			return types.FavoriteActionResp{
-				StatusCode: 0,
-				StatusMsg:  "like action",
+				StatusCode: 1,
+				StatusMsg:  fmt.Sprintf("like action error:%v", err),
 			}
 		}
-	}
-	return types.FavoriteActionResp{
-		StatusCode: 1,
-		StatusMsg:  "User doesn't exist",
+		return types.FavoriteActionResp{
+			StatusCode: 0,
+			StatusMsg:  "like action",
+		}
 	}
 }
 
-func DoSelectLikeList(userId, token string) types.FavoriteListResp {
-	//验证token
-	userExist, _, _, err := mysql.QueryUserName(token)
-	if err != nil {
-		return types.FavoriteListResp{
-			StatusCode: "1",
-			StatusMsg:  fmt.Sprintf("select token error:%v", err),
-			VideoList:  nil,
-		}
-	}
-	if !userExist {
-		fmt.Printf("token nonexistent")
-		return types.FavoriteListResp{
-			StatusCode: "1",
-			StatusMsg:  fmt.Sprintf("token nonexistent"),
-			VideoList:  nil,
-		}
-	}
+func DoSelectLikeList(userId string) types.FavoriteListResp {
 	//查询喜欢列表
 	res, errRead := mysql.SelectLikeList(userId)
 	if errRead != nil {
 		return types.FavoriteListResp{
 			StatusCode: "1",
-			StatusMsg:  fmt.Sprintf("select likelist error:%v", err),
+			StatusMsg:  fmt.Sprintf("select likelist error:%v", errRead),
 			VideoList:  nil,
 		}
 	}

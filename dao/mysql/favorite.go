@@ -75,8 +75,9 @@ func SelectLikeList(userId string) (*sql.Rows, error) {
 	}
 	var likes = make([]*models.Like, 0)
 	res := db.Where("user_id = ?", userIdInt).Find(&likes)
-	if res.Error != nil {
-		return nil, fmt.Errorf("select likelist error:%v", err)
+	//检查是否找到数据
+	if len(likes) == 0 {
+		return nil, fmt.Errorf("select likelist id null")
 	}
 	resRows, errRows := res.Rows()
 	if errRows != nil {

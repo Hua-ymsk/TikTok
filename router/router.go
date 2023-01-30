@@ -40,6 +40,7 @@ func InitRouter() *gin.Engine {
 		}
 		// favorite apis
 		favorite := apiRouter.Group("/favorite")
+		favorite.Use(middleware.JWTAuth())
 		{
 			favorite.POST("/action", favoriteAPI.FavoriteAction)
 			favorite.GET("/list", favoriteAPI.FavoriteList)
