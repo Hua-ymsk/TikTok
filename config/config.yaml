@@ -1,6 +1,6 @@
 name: "sample-tiktok"
 mode: "dev"
-port: 9090
+port: 8080
 start_time: "2022-02-09"
 machine_id: 1
 

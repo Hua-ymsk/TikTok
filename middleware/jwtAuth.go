@@ -16,17 +16,17 @@ import (
 
 // MyClaims 内嵌jwt.StandardClaims,增加userid和username字段
 type MyClaims struct {
-	UserID int64 `json:"userNow_id"`
+	UserID int64 `json:"user_id"`
 	jwt.StandardClaims
 }
 
 var (
 	jwtConfig     = new(setting.JwtConfig)
 	ISSUER        = jwtConfig.Issuer
+	SECRET        = []byte(jwtConfig.AccessSecret)
 	ACCESSEXPIRE  = jwtConfig.AccessExpire
 	REFRESHEXPIRE = jwtConfig.RefreshExpire
 )
-var SECRET = []byte("tiktok_jwt_key")
 
 // 定义错误
 var (

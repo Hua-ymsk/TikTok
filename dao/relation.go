@@ -4,55 +4,52 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
 )
 
-// TokenResolution 解析Token获得userId
-func TokenResolution(Token string) (userId string, err error) {
-	//暂不验证Token
-	userId, err = Token, nil
-	//
-	return
-}
+//// TokenResolution 解析Token获得userId
+//func TokenResolution(Token string) (userId string, err error) {
+//	//测试用
+//	userId, err = Token, nil
+//	////正式使用
+//	//claims, err := middleware.ParseToken(Token)
+//	//userId = claims.UserID
+//	return
+//}
 
-// UserExist 解析Token获得userId,并检验该Token对应用户是否存在
-func UserExist(Token string) (userId string, err error) {
-	userId, err = TokenResolution(Token)
-	if err != nil {
-		return "", fmt.Errorf("token resolution error: %w", err)
-	}
+// UserExist 检验该UserId对应用户是否存在
+func UserExist(UserId int64) (err error) {
 	sqlStatement := "SELECT * FROM users WHERE id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
-		return "", fmt.Errorf("select init error: %w", err)
+		return fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId)
+	res, err := stmt.Query(UserId)
 	if err != nil {
-		return "", fmt.Errorf("select execute error: %w", err)
+		return fmt.Errorf("select execute error: %w", err)
 	}
 	defer res.Close()
 	if res.Next() == false {
-		return "", errors.New("user not exist error")
+		return errors.New("user not exist error")
 	}
-	return Token, nil
+	return nil
 }
 
 // FollowExist 查询关注信息是否存在
-func FollowExist(UserId string, ToUserId string) (exist bool, err error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return false, fmt.Errorf("parameter error: %w", err)
-	}
-	toUserId, err := strconv.Atoi(ToUserId)
-	if err != nil {
-		return false, fmt.Errorf("parameter error: %w", err)
-	}
+func FollowExist(UserId int64, ToUserId int64) (exist bool, err error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return false, fmt.Errorf("parameter error: %w", err)
+	//}
+	//toUserId, err := strconv.Atoi(ToUserId)
+	//if err != nil {
+	//	return false, fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement := "SELECT * FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return false, fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId, toUserId)
+	res, err := stmt.Query(UserId, ToUserId)
 	if err != nil {
 		return false, fmt.Errorf("select execute error: %w", err)
 	}
@@ -64,43 +61,43 @@ func FollowExist(UserId string, ToUserId string) (exist bool, err error) {
 }
 
 // InsertFollow 插入关注信息(0为未互关，1为已互关)
-func InsertFollow(UserId string, ToUserId string, Relationship int) (err error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
-	toUserId, err := strconv.Atoi(ToUserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
+func InsertFollow(UserId int64, ToUserId int64, Relationship int) (err error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
+	//toUserId, err := strconv.Atoi(ToUserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement := "INSERT INTO follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("insert init error: %w", err)
 	}
-	_, err = stmt.Exec(userId, toUserId, Relationship)
+	_, err = stmt.Exec(UserId, ToUserId, Relationship)
 	if err != nil {
 		return fmt.Errorf("insert execute error: %w", err)
 	}
 	return nil
 }
 
-// ChangeRelation 修改关注信息
-func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
-	toUserId, err := strconv.Atoi(ToUserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
+// UpdateRelation 修改关注信息
+func UpdateRelation(UserId int64, ToUserId int64, Relationship int) (err error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
+	//toUserId, err := strconv.Atoi(ToUserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement := "UPDATE follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("update init error: %w", err)
 	}
-	_, err = stmt.Exec(Relationship, userId, toUserId)
+	_, err = stmt.Exec(Relationship, UserId, ToUserId)
 	if err != nil {
 		return fmt.Errorf("update execute error: %w", err)
 	}
@@ -108,33 +105,89 @@ func ChangeRelation(UserId string, ToUserId string, Relationship int) (err error
 }
 
 // DeleteFollow 删除关注信息
-func DeleteFollow(UserId string, ToUserId string) (err error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
-	toUserId, err := strconv.Atoi(ToUserId)
-	if err != nil {
-		return fmt.Errorf("parameter error: %w", err)
-	}
+func DeleteFollow(UserId int64, ToUserId int64) (err error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
+	//toUserId, err := strconv.Atoi(ToUserId)
+	//if err != nil {
+	//	return fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement := "DELETE FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
 		return fmt.Errorf("delete init error: %w", err)
 	}
-	_, err = stmt.Exec(userId, toUserId)
+	_, err = stmt.Exec(UserId, ToUserId)
 	if err != nil {
 		return fmt.Errorf("delete execute error: %w", err)
 	}
 	return nil
 }
 
-// SelectFollowList 查询所有关注的信息列表
-func SelectFollowList(UserId string) (*sql.Rows, error) {
-	userId, err := strconv.Atoi(UserId)
+// UpdInsRelation 关注时，有对方信息存在，执行修改标记并进行插入
+func UpdInsRelation(UserId int64, ToUserId int64) (err error) {
+	//修改标记
+	begin, _ := db.Begin()
+	err = UpdateRelation(ToUserId, UserId, 1)
 	if err != nil {
-		return nil, fmt.Errorf("parameter error: %w", err)
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
 	}
+	//插入信息
+	err = InsertFollow(UserId, ToUserId, 1)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	err = begin.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdDelRelation 取消关注时，有对方信息存在，执行修改标记并进行删除
+func UpdDelRelation(UserId int64, ToUserId int64) (err error) {
+	//修改标记
+	begin, _ := db.Begin()
+	err = UpdateRelation(ToUserId, UserId, 0)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	//插入信息
+	err = DeleteFollow(UserId, ToUserId)
+	if err != nil {
+		err := begin.Rollback()
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	err = begin.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SelectFollowList 查询所有关注的信息列表
+func SelectFollowList(UserId int64) (*sql.Rows, error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return nil, fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement :=
 		`SELECT
 			users.id,
@@ -152,7 +205,7 @@ func SelectFollowList(UserId string) (*sql.Rows, error) {
 	if err != nil {
 		return nil, fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId)
+	res, err := stmt.Query(UserId)
 	if err != nil {
 		return nil, fmt.Errorf("select execute error: %w", err)
 	}
@@ -160,11 +213,11 @@ func SelectFollowList(UserId string) (*sql.Rows, error) {
 }
 
 // SelectFollowerList 查询所有粉丝的信息列表
-func SelectFollowerList(UserId string) (*sql.Rows, error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return nil, fmt.Errorf("parameter error: %w", err)
-	}
+func SelectFollowerList(UserId int64) (*sql.Rows, error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return nil, fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement :=
 		`SELECT
 			users.id,
@@ -183,7 +236,7 @@ func SelectFollowerList(UserId string) (*sql.Rows, error) {
 	if err != nil {
 		return nil, fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId, userId)
+	res, err := stmt.Query(UserId, UserId)
 	if err != nil {
 		return nil, fmt.Errorf("select execute error: %w", err)
 	}
@@ -191,11 +244,11 @@ func SelectFollowerList(UserId string) (*sql.Rows, error) {
 }
 
 // SelectFriendList 查询所有互关的信息列表
-func SelectFriendList(UserId string) (*sql.Rows, error) {
-	userId, err := strconv.Atoi(UserId)
-	if err != nil {
-		return nil, fmt.Errorf("parameter error: %w", err)
-	}
+func SelectFriendList(UserId int64) (*sql.Rows, error) {
+	//userId, err := strconv.Atoi(UserId)
+	//if err != nil {
+	//	return nil, fmt.Errorf("parameter error: %w", err)
+	//}
 	sqlStatement :=
 		`SELECT
 			users.id,
@@ -213,7 +266,7 @@ func SelectFriendList(UserId string) (*sql.Rows, error) {
 	if err != nil {
 		return nil, fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(userId)
+	res, err := stmt.Query(UserId)
 	if err != nil {
 		return nil, fmt.Errorf("select execute error: %w", err)
 	}

@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"tiktok/logic"
 )
 
@@ -18,14 +19,16 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 			status_code<int>:0成功|1失败
 			status_msg<string>:信息
 	*/
-	Token := c.Query("token")
-	ToUserId := c.Query("to_user_id")
+	userId, _ := c.Get("user_id")
+	UserId := userId.(int64)
+	toUserId := c.Query("to_user_id")
+	ToUserId, _ := strconv.ParseInt(toUserId, 10, 64)
 	ActionType := c.Query("action_type")
 	if ActionType == "1" {
-		response := logic.DoFollow(Token, ToUserId)
+		response := logic.DoFollow(UserId, ToUserId)
 		c.JSON(http.StatusOK, response)
 	} else if ActionType == "2" {
-		response := logic.DoUnFollow(Token, ToUserId)
+		response := logic.DoUnFollow(UserId, ToUserId)
 		c.JSON(http.StatusOK, response)
 	}
 }
@@ -45,9 +48,9 @@ func (api *RelationAPI) FollowList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	UserId := c.Query("user_id")
-	Token := c.Query("token")
-	response := logic.SelectFollowList(UserId, Token)
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
+	response := logic.SelectFollowList(UserId)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -66,9 +69,9 @@ func (api *RelationAPI) FollowerList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	UserId := c.Query("user_id")
-	Token := c.Query("token")
-	response := logic.SelectFollowerList(UserId, Token)
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
+	response := logic.SelectFollowerList(UserId)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -87,8 +90,8 @@ func (api *RelationAPI) FriendList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	UserId := c.Query("user_id")
-	Token := c.Query("token")
-	response := logic.SelectFriendList(UserId, Token)
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
+	response := logic.SelectFriendList(UserId)
 	c.JSON(http.StatusOK, response)
 }
