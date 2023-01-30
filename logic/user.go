@@ -8,6 +8,7 @@ import (
 	"tiktok/dao/mysql"
 	"tiktok/middleware"
 	"tiktok/models"
+	"tiktok/types"
 )
 
 type UserRegisterLogic struct {
@@ -92,9 +93,10 @@ func (logic *UserInfoLogic) UserInfo(c *gin.Context) utils.CResponse {
 	user := models.User{
 		ID: userid,
 	}
-	id, _ := strconv.ParseInt(c.Query("userNow_id"), 10, 64)
+	var responseUser types.User
+	id, _ := c.Get("user_id")
 	//这里查询的是当前要查询的用户
 	fmt.Println("查询的用户是", id)
-	_, user.ID, _, user.NickName, user.Fans, user.Follows, user.IsFollow, _ = mysql.QueryUserID(user.ID, id)
-	return utils.CCResponse(0, "用户信息获取成功", user)
+	_, responseUser.ID, _, responseUser.Name, responseUser.FollowerCount, responseUser.FollowCount, responseUser.IsFollow, _ = mysql.QueryUserID(user.ID, id)
+	return utils.CCResponse(0, "用户信息获取成功", responseUser)
 }

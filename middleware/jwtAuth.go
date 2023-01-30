@@ -3,7 +3,6 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"tiktok/common/result"
 	"tiktok/setting"
 	"time"
@@ -39,20 +38,12 @@ var (
 // JWTAuthMiddleware 基于JWT的认证中间件
 func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		tokenStr := c.Query("token")
+		tokenStr := c.GetHeader("token")
 		mc, err := ParseToken(tokenStr)
 		fmt.Println(mc.UserID)
 		if err != nil {
 
 			result.ResponseErr(c, "令牌无效或过期")
-			c.Abort()
-			return
-		}
-		// 验证user_id
-		user_id, _ := strconv.ParseInt(c.Query("userNow_id"), 10, 64)
-		fmt.Println("验证userid")
-		if user_id != mc.UserID {
-			result.ResponseErr(c, "令牌无效")
 			c.Abort()
 			return
 		}
@@ -64,7 +55,7 @@ func JWTAuth() func(c *gin.Context) {
 		}
 
 		// 将当前请求的userID信息保存到请求的上下文c上
-		c.Set("userNow_id", user_id)
+		c.Set("user_id", mc.UserID)
 		c.Next() // 后续的处理函数可以用过c.Get(ContextUserIDKey)来获取当前请求的用户信息
 	}
 }

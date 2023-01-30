@@ -20,10 +20,10 @@ func QueryUserName(username string) (userN bool, userid int64, password string, 
 
 // 注册用户
 func RegisterUser(user *models.User) (userid int64) {
-	db.Create(user)
+	db.Select("user_name", "password", "nickname").Create(user)
 	return user.ID
 }
-func QueryUserID(userId int64, usernowId int64) (userN bool, userid int64, password string, nickname string, fans int64, follows int64, isfollow bool, err error) {
+func QueryUserID(userId int64, usernowId any) (userN bool, userid int64, password string, nickname string, fans int64, follows int64, isfollow bool, err error) {
 	var user models.User
 	var userNow models.User
 	var follow models.Follow
