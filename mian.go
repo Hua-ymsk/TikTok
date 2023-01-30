@@ -12,8 +12,6 @@ import (
 )
 
 func main() {
-	fmt.Println(middleware.GenToken(1, "111"))
-
 	// 加载config
 	if err := setting.Init(); err != nil {
 		fmt.Println("load config err:", err)
@@ -46,8 +44,4 @@ func main() {
 		fmt.Println("init router err:", err)
 		return
 	}
-
-	// r := gin.Default()
-	// router.InitRouter()
-	// r.Run(":9090") // listen and serve on 0.0.0.0:9090
 }
