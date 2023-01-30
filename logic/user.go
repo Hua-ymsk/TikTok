@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"tiktok/common/utils"
@@ -96,7 +95,6 @@ func (logic *UserInfoLogic) UserInfo(c *gin.Context) utils.CResponse {
 	var responseUser types.User
 	id, _ := c.Get("user_id")
 	//这里查询的是当前要查询的用户
-	fmt.Println("查询的用户是", id)
-	_, responseUser.ID, _, responseUser.Name, responseUser.FollowerCount, responseUser.FollowCount, responseUser.IsFollow, _ = mysql.QueryUserID(user.ID, id)
+	_, responseUser.UserID, _, responseUser.Name, responseUser.FollowerCount, responseUser.FollowCount, responseUser.IsFollow, _ = mysql.QueryUserID(user.ID, id)
 	return utils.CCResponse(0, "用户信息获取成功", responseUser)
 }
