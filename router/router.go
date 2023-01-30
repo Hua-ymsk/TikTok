@@ -11,6 +11,7 @@ var (
 	videoAPI    = &controller.VideoAPI{}
 	relationAPI = &controller.RelationAPI{}
 	favoriteAPI = &controller.FavoriteAPI{}
+	commentAPI  = &controller.CommentAPI{}
 	userAPI     = &controller.UserAPI{}
 )
 
@@ -44,6 +45,13 @@ func InitRouter() *gin.Engine {
 		{
 			favorite.POST("/action", favoriteAPI.FavoriteAction)
 			favorite.GET("/list", favoriteAPI.FavoriteList)
+		}
+		// comment apis
+		comment := apiRouter.Group("/comment")
+		comment.Use(middleware.JWTAuth())
+		{
+			comment.POST("/action", commentAPI.CommentAction)
+			comment.GET("/list", commentAPI.CommentList)
 		}
 		//user
 		user := apiRouter.Group("/user")

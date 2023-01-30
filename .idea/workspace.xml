@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16630b35-6014-4d0b-9159-a20f04e0613e" name="变更" comment="提交workspace.xml">
+    <list default="true" id="16630b35-6014-4d0b-9159-a20f04e0613e" name="变更" comment="使用jwt优化赞、赞列表操作">
+      <change afterPath="$PROJECT_DIR$/controller/comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/mysql/comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logic/comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/comment.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/types/comment.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/favorite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/mysql/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/mysql/favorite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic/favorite.go" beforeDir="false" afterPath="$PROJECT_DIR$/logic/favorite.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +86,8 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="使用jwt优化赞、赞列表操作" />
+    <option name="LAST_COMMIT_MESSAGE" value="使用jwt优化赞、赞列表操作" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
