@@ -27,7 +27,7 @@ type RelationResponse struct { //关注用户信息
 }
 
 // DoFollow 执行关注，先查询是否有对方关注信息存在，若存在修改标记并插入一条新信息；否则只插入一条新信息
-func DoFollow(UserId string, ToUserId string) (relationResponse RelationResponse) {
+func DoFollow(UserId int64, ToUserId int64) (relationResponse RelationResponse) {
 	//查询关注信息是否存在
 	exist, err := dao.FollowExist(UserId, ToUserId)
 	if err != nil { //检验出现错误
@@ -59,7 +59,7 @@ func DoFollow(UserId string, ToUserId string) (relationResponse RelationResponse
 }
 
 // DoUnFollow 执行取消关注，先查询是否有对方关注信息存在，若存在修改标记并删除自己的关注信息；否则只删除自己的关注信息
-func DoUnFollow(UserId string, ToUserId string) (relationResponse RelationResponse) {
+func DoUnFollow(UserId int64, ToUserId int64) (relationResponse RelationResponse) {
 	//查询关注信息是否存在
 	exist, err := dao.FollowExist(UserId, ToUserId)
 	if err != nil { //检验出现错误
@@ -91,7 +91,7 @@ func DoUnFollow(UserId string, ToUserId string) (relationResponse RelationRespon
 }
 
 // SelectFollowList 查询关注信息列表并格式化转换成JSON格式
-func SelectFollowList(UserId string) (followListResponse RelationListResponse) {
+func SelectFollowList(UserId int64) (followListResponse RelationListResponse) {
 	var followUserList = make([]FollowUser, 0, 100)
 	//验证用户存在
 	err := dao.UserExist(UserId)
@@ -129,7 +129,7 @@ func SelectFollowList(UserId string) (followListResponse RelationListResponse) {
 }
 
 // SelectFollowerList 查询粉丝信息列表并格式化转换成JSON格式
-func SelectFollowerList(UserId string) (followerListResponse RelationListResponse) {
+func SelectFollowerList(UserId int64) (followerListResponse RelationListResponse) {
 	var followerUserList = make([]FollowUser, 0, 100)
 	//验证用户存在
 	err := dao.UserExist(UserId)
@@ -167,7 +167,7 @@ func SelectFollowerList(UserId string) (followerListResponse RelationListRespons
 }
 
 // SelectFriendList 查询互关信息列表并格式化转换成JSON格式
-func SelectFriendList(UserId string) (friendListResponse RelationListResponse) {
+func SelectFriendList(UserId int64) (friendListResponse RelationListResponse) {
 	var friendUserList = make([]FollowUser, 0, 100)
 	//验证用户存在
 	err := dao.UserExist(UserId)

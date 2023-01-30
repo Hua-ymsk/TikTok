@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -22,8 +20,9 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 			status_msg<string>:信息
 	*/
 	userId, _ := c.Get("user_id")
-	UserId := strconv.FormatInt(userId.(int64), 10)
-	ToUserId := c.Query("to_user_id")
+	UserId := userId.(int64)
+	toUserId := c.Query("to_user_id")
+	ToUserId, _ := strconv.ParseInt(toUserId, 10, 64)
 	ActionType := c.Query("action_type")
 	if ActionType == "1" {
 		response := logic.DoFollow(UserId, ToUserId)
@@ -49,13 +48,8 @@ func (api *RelationAPI) FollowList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	tokenUserId, _ := c.Get("user_id")
-	TokenUserId := strconv.FormatInt(tokenUserId.(int64), 10)
-	UserId := c.Query("user_id")
-	if TokenUserId != UserId {
-		response := logic.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("token resolution error"))}
-		c.JSON(http.StatusOK, response)
-	}
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
 	response := logic.SelectFollowList(UserId)
 	c.JSON(http.StatusOK, response)
 }
@@ -75,13 +69,8 @@ func (api *RelationAPI) FollowerList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	tokenUserId, _ := c.Get("user_id")
-	TokenUserId := strconv.FormatInt(tokenUserId.(int64), 10)
-	UserId := c.Query("user_id")
-	if TokenUserId != UserId {
-		response := logic.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("token resolution error"))}
-		c.JSON(http.StatusOK, response)
-	}
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
 	response := logic.SelectFollowerList(UserId)
 	c.JSON(http.StatusOK, response)
 }
@@ -101,13 +90,8 @@ func (api *RelationAPI) FriendList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	tokenUserId, _ := c.Get("user_id")
-	TokenUserId := strconv.FormatInt(tokenUserId.(int64), 10)
-	UserId := c.Query("user_id")
-	if TokenUserId != UserId {
-		response := logic.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("token resolution error"))}
-		c.JSON(http.StatusOK, response)
-	}
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
 	response := logic.SelectFriendList(UserId)
 	c.JSON(http.StatusOK, response)
 }
