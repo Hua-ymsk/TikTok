@@ -50,7 +50,7 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 		log.Println("save err:", err)
 		return err
 	}
-	// 获取封面截图
+	// 获取封面截图(优化：截图用jpg格式)
 	coverName := strconv.FormatUint(snowflake.GetID(), 10)
 	cover_url, err := ffmpeg.MakeCover(vidoName, coverName)
 	if err != nil {
@@ -82,7 +82,13 @@ func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.
 		fmt.Println("copy err:", err)
 		return nil, err
 	}
+	// 是否点赞
+	// for video := range list {
+
+	// }
+
 	// 作者信息(等jack写完)
+
 
 	return
 }
