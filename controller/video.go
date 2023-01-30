@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"net/http"
 	"strconv"
 	"tiktok/common/result"
 	"tiktok/logic"
 	"tiktok/types"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +14,32 @@ import (
 type VideoAPI struct{}
 
 func (api *VideoAPI) FeedHandler(c *gin.Context) {
+	var req types.FeedReq
+	if err := c.ShouldBind(&req); err != nil {
+		result.ResponseErr(c, "参数错误")
+		return
+	}
+	// 判断latest_time
+	var latest int64
+	if req.LatestTime == "" {
+		latest = time.Now().Unix()
+	} else {
+		tmp, _ := strconv.ParseInt(req.LatestTime, 10, 64)
+		latest = time.Unix(tmp, 0).Unix()
+	}
+	l := logic.NewVideoLogic()
+	feed, next_time, err := l.Feed(latest)
+	if err != nil {
+		result.ResponseErr(c, "获取视频流失败")
+	}
+	c.JSON(http.StatusOK, types.FeedResp{
+		NextTime:   next_time,
+		StatusCode: 0,
+		StatusMsg:  "请求成功",
+		VideoList:  feed,
+	})
 
+	return
 }
 
 func (api *VideoAPI) PublishHandler(c *gin.Context) {
@@ -45,10 +72,16 @@ func (api *VideoAPI) PublishListHandler(c *gin.Context) {
 		result.ResponseErr(c, "参数错误")
 		return
 	}
-	if _, err := l.VideoList(c, user_id); err != nil {
+	videoList, err := l.VideoList(c, user_id)
+	if err != nil {
 		result.ResponseErr(c, "查询错误")
 		return
 	}
+	c.JSON(http.StatusOK, types.PublishListResp{
+		StatusCode: 0,
+		StatusMsg: "请求成功",
+		VideoList: videoList,
+	})
 
 	return
 }
