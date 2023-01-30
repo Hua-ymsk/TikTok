@@ -19,7 +19,10 @@ func Init(cfg *setting.MysqlConfig) (err error) {
 		DSN:                     dsn,
 		DontSupportRenameIndex:  true, // 重命名索引时采用删除并新建的方式（MySQL 5.7之后）
 		DontSupportRenameColumn: true, // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
-	}), &gorm.Config{})
+	}), &gorm.Config{
+		SkipDefaultTransaction: true, // 禁止默认事务
+		PrepareStmt:            true, // 开启全局缓存预编译语句
+	})
 	if err != nil {
 		panic(fmt.Errorf("connect to mysql err:%+v", err))
 	}

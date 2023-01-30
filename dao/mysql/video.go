@@ -55,7 +55,14 @@ func ChekFollow(sender_id, user_id int64) (idfollow bool, err error) {
 
 // 是否点赞
 func CheckFavorite(user_id int64, video_id int64) (isfavorite bool, err error) {
-	db.Select("user_id").Where("user_id = ? and video_id = ?")
-
-	return
+	var like models.Like
+	res := db.Select("user_id").Where("user_id = ? and video_id = ?").Take(&like)
+	if res.Error != nil && res.Error != gorm.ErrRecordNotFound {
+		return false, res.Error
+	}
+	if res.Error == gorm.ErrRecordNotFound {
+		return false, nil
+	}
+	
+	return true, nil
 }
