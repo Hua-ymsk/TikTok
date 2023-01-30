@@ -6,8 +6,9 @@ import (
 	"tiktok/common/utils"
 	"tiktok/logic"
 
-	"github.com/gin-gonic/gin"
 	"tiktok/models"
+
+	"github.com/gin-gonic/gin"
 
 )
 
