@@ -2,6 +2,6 @@ package models
 
 type Like struct {
 	ID      int `gorm:"primaryKey"`
-	UserId  int `column:"user_id"`
-	VideoId int `column:"video_id"`
+	UserId  int `gorm:"column:user_id"`
+	VideoId int `gorm:"column:video_id"`
 }
