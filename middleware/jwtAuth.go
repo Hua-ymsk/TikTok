@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"tiktok/common/result"
 	"tiktok/setting"
 	"time"
@@ -39,8 +38,10 @@ var (
 func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		tokenStr := c.Query("token")
+		if tokenStr == "" {
+			tokenStr = c.PostForm("token")
+		}
 		mc, err := ParseToken(tokenStr)
-		fmt.Println(mc.UserID)
 		if err != nil {
 			result.ResponseErr(c, "令牌无效或过期")
 			c.Abort()
@@ -94,8 +95,6 @@ func ParseToken(tokenString string) (claims *MyClaims, err error) {
 	var token *jwt.Token
 	claims = new(MyClaims)
 	token, err = jwt.ParseWithClaims(tokenString, claims, keyFunc)
-	fmt.Println(token)
-	fmt.Println(err)
 	if err != nil {
 		v, _ := err.(*jwt.ValidationError)
 		// 当AccessToken是过期错误
