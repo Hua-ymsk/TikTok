@@ -6,15 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="16630b35-6014-4d0b-9159-a20f04e0613e" name="变更" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/utils/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/utils/response.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dao/mysql/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/mysql/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/log/test.log" beforeDir="false" afterPath="$PROJECT_DIR$/log/test.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/logic/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/middleware/jwtAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/jwtAuth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/follows.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/follows.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +46,7 @@
     "WebServerToolWindowFactoryState": "false",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "E:/project/tiktok/TikTok",
+    "last_opened_file_path": "E:/project/go/blog",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)"
   }
