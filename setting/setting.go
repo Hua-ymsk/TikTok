@@ -35,7 +35,6 @@ type MysqlConfig struct {
 type RedisConfig struct{}
 
 type JwtConfig struct {
-	AccessSecret  string `mapstructure:"AccessSecret"`
 	AccessExpire  string `mapstructure:"AccessExpire"`
 	RefreshExpire string `mapstructure:"RefreshExpire"`
 	Issuer        string `mapstructure:"Issuer"`

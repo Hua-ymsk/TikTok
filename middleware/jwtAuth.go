@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"tiktok/common/result"
 	"tiktok/setting"
@@ -40,13 +41,16 @@ func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		tokenStr := c.Query("token")
 		mc, err := ParseToken(tokenStr)
+		fmt.Println(mc.UserID)
 		if err != nil {
+
 			result.ResponseErr(c, "令牌无效或过期")
 			c.Abort()
 			return
 		}
 		// 验证user_id
-		user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+		user_id, _ := strconv.ParseInt(c.Query("userNow_id"), 10, 64)
+		fmt.Println("验证userid")
 		if user_id != mc.UserID {
 			result.ResponseErr(c, "令牌无效")
 			c.Abort()
@@ -58,8 +62,9 @@ func JWTAuth() func(c *gin.Context) {
 			c.Abort()
 			return
 		}
+
 		// 将当前请求的userID信息保存到请求的上下文c上
-		c.Set("user_id", user_id)
+		c.Set("userNow_id", user_id)
 		c.Next() // 后续的处理函数可以用过c.Get(ContextUserIDKey)来获取当前请求的用户信息
 	}
 }
@@ -69,13 +74,16 @@ func keyFunc(_ *jwt.Token) (i interface{}, err error) {
 }
 
 // GenToken 生成access token 和 refresh token
-func GenToken(userID int64, username string) (aToken, rToken string, err error) {
+func GenToken(userID int64) (aToken string, rToken string, err error) {
 	// 创建一个自己的声明
+	expireTime := time.Now().Add(2 * time.Hour)
+	nowTime := time.Now()
 	AccessClaims := MyClaims{
-		userID,
+		UserID: userID,
 		// JWT规定的官方字段
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(viper.GetInt(ACCESSEXPIRE))).Unix(),
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expireTime.Unix(), //过期时间戳
+			IssuedAt:  nowTime.Unix(),    //当前时间戳,
 			Issuer:    ISSUER,
 		},
 	}
@@ -96,6 +104,8 @@ func ParseToken(tokenString string) (claims *MyClaims, err error) {
 	var token *jwt.Token
 	claims = new(MyClaims)
 	token, err = jwt.ParseWithClaims(tokenString, claims, keyFunc)
+	fmt.Println(token)
+	fmt.Println(err)
 	if err != nil {
 		v, _ := err.(*jwt.ValidationError)
 		// 当AccessToken是过期错误
