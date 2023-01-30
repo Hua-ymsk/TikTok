@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ca7407a-6698-46a4-949b-05c6fcac9047" name="变更" comment="type int64 alert" />
+    <list default="true" id="3ca7407a-6698-46a4-949b-05c6fcac9047" name="变更" comment="lxj alert" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -208,7 +208,8 @@
     <MESSAGE value="MySQL atomicity alter." />
     <MESSAGE value="jwt" />
     <MESSAGE value="type int64 alert" />
-    <option name="LAST_COMMIT_MESSAGE" value="type int64 alert" />
+    <MESSAGE value="lxj alert" />
+    <option name="LAST_COMMIT_MESSAGE" value="lxj alert" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
