@@ -23,7 +23,7 @@ type MyClaims struct {
 var (
 	jwtConfig     = new(setting.JwtConfig)
 	ISSUER        = jwtConfig.Issuer
-	SECRET        = []byte(jwtConfig.AccessSecret)
+	SECRET        = []byte("test")
 	ACCESSEXPIRE  = jwtConfig.AccessExpire
 	REFRESHEXPIRE = jwtConfig.RefreshExpire
 )
@@ -38,11 +38,10 @@ var (
 // JWTAuthMiddleware 基于JWT的认证中间件
 func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		tokenStr := c.GetHeader("token")
+		tokenStr := c.PostForm("token")
 		mc, err := ParseToken(tokenStr)
 		fmt.Println(mc.UserID)
 		if err != nil {
-
 			result.ResponseErr(c, "令牌无效或过期")
 			c.Abort()
 			return
