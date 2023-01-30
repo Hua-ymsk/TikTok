@@ -1,6 +1,6 @@
 name: "sample-tiktok"
 mode: "dev"
-port: 8080
+port: 9090
 start_time: "2022-02-09"
 machine_id: 1
 
@@ -29,4 +29,5 @@ Mysql:
 Video:
   PlayUrlPrefix: "E:/Project/GoProject/tiktok-static/static/videos/"
   CoverUrlPrefix: "E:/Project/GoProject/tiktok-static/static/covers/"
+  PageSize : 10
 

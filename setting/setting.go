@@ -16,7 +16,7 @@ type AppConfig struct {
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*JwtConfig   `mapstructure:"JwtAuth"`
-	*FtpConfig   `mapstructure:"FTP"`
+	*FtpConfig `mapstructure:"FTP"`
 	*VideoConfig `mapstructure:"Video"`
 }
 
@@ -35,20 +35,22 @@ type MysqlConfig struct {
 type RedisConfig struct{}
 
 type JwtConfig struct {
-	AccessExpire  string `mapstructure:"AccessExpire"`
+	AccessSecret string `mapstructure:"AccessSecret"`
+	AccessExpire string `mapstructure:"AccessExpire"`
 	RefreshExpire string `mapstructure:"RefreshExpire"`
-	Issuer        string `mapstructure:"Issuer"`
-}
+	Issuer string `mapstructure:"Issuer"`
+} 
 
 type FtpConfig struct {
 	ServerAddr string `mapstructure:"ServerAddr"`
-	UserName   string `mapstructure:"Name"`
-	Pwd        string `mapstructure:"Pwd"`
+	UserName string `mapstructure:"Name"`
+	Pwd string `mapstructure:"Pwd"`
 }
 
 type VideoConfig struct {
-	PlayUrlPrefix  string `mapstructure:"PlayUrlPrefix"`
+	PlayUrlPrefix string `mapstructure:"PlayUrlPrefix"`
 	CoverUrlPrefix string `mapstructure:"CoverUrlPrefix"`
+	PageSize int64 `mapstructure:"PageSize"`
 }
 
 var Conf = new(AppConfig)
