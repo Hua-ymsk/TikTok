@@ -38,7 +38,7 @@ var (
 // JWTAuthMiddleware 基于JWT的认证中间件
 func JWTAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
-		tokenStr := c.PostForm("token")
+		tokenStr := c.Query("token")
 		mc, err := ParseToken(tokenStr)
 		fmt.Println(mc.UserID)
 		if err != nil {
