@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ca7407a-6698-46a4-949b-05c6fcac9047" name="变更" comment="jwt">
-      <change beforePath="$PROJECT_DIR$/controller/relation.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/relation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/relation.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/relation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log/test.log" beforeDir="false" afterPath="$PROJECT_DIR$/log/test.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic/relation.go" beforeDir="false" afterPath="$PROJECT_DIR$/logic/relation.go" afterDir="false" />
-    </list>
+    <list default="true" id="3ca7407a-6698-46a4-949b-05c6fcac9047" name="变更" comment="type int64 alert" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -212,7 +207,8 @@
     <MESSAGE value="Project rebuild." />
     <MESSAGE value="MySQL atomicity alter." />
     <MESSAGE value="jwt" />
-    <option name="LAST_COMMIT_MESSAGE" value="jwt" />
+    <MESSAGE value="type int64 alert" />
+    <option name="LAST_COMMIT_MESSAGE" value="type int64 alert" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
