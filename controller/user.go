@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"tiktok/logic"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserAPI struct{}
