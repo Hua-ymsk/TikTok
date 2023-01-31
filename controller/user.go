@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -39,6 +40,7 @@ func (api *UserAPI) UserInfo(c *gin.Context) {
 	var logicuserinfo logic.UserInfoLogic
 	userid, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
 	id := c.GetInt64("user_id")
+	fmt.Println(id)
 	response := logicuserinfo.UserInfo(userid, id)
 	c.JSON(http.StatusOK, response)
 }
