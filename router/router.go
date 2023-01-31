@@ -34,10 +34,10 @@ func InitRouter() *gin.Engine {
 		// extra apis - II
 		relation := apiRouter.Group("/relation")
 		{
-			relation.POST("/action", relationAPI.RelationAction)
-			relation.GET("/follow/list", relationAPI.FollowList)
-			relation.GET("/follower/list", relationAPI.FollowerList)
-			relation.GET("/friend/list", relationAPI.FriendList)
+			relation.POST("/action/", relationAPI.RelationAction)
+			relation.GET("/follow/list/", relationAPI.FollowList)
+			relation.GET("/follower/list/", relationAPI.FollowerList)
+			relation.GET("/friend/list/", relationAPI.FriendList)
 		}
 		// favorite apis
 		favorite := apiRouter.Group("/favorite")
