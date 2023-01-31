@@ -19,9 +19,7 @@ func DoFollow(UserId int64, ToUserId int64) (relationResponse types.RelationResp
 	go func() {
 		//查询关注信息是否存在
 		defer wg.Done()
-		defer fmt.Println(1)
 		exist, err := dao.FollowExist(UserId, ToUserId)
-		fmt.Println(exist)
 		if err != nil { //检验出现错误
 			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 			return
@@ -34,9 +32,7 @@ func DoFollow(UserId int64, ToUserId int64) (relationResponse types.RelationResp
 	go func() {
 		//查询对方关注信息是否存在
 		defer wg.Done()
-		defer fmt.Println(2)
 		exist, err := dao.FollowExist(ToUserId, UserId)
-		fmt.Println(exist)
 		if err != nil { //检验出现错误
 			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 			return
@@ -76,9 +72,7 @@ func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationRe
 	go func() {
 		//查询关注信息是否存在
 		defer wg.Done()
-		defer fmt.Println(1)
 		exist, err := dao.FollowExist(UserId, ToUserId)
-		fmt.Println(exist)
 		if err != nil { //检验出现错误
 			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 			return
@@ -91,9 +85,7 @@ func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationRe
 	go func() {
 		//查询对方关注信息是否存在
 		defer wg.Done()
-		defer fmt.Println(2)
 		exist, err := dao.FollowExist(ToUserId, UserId)
-		fmt.Println(exist)
 		if err != nil { //检验出现错误
 			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 			return

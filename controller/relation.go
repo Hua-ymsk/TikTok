@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -19,10 +20,12 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 			status_code<int>:0成功|1失败
 			status_msg<string>:信息
 	*/
+
 	UserId := c.GetInt64("user_id")
 	toUserId := c.Query("to_user_id")
 	ToUserId, _ := strconv.ParseInt(toUserId, 10, 64)
 	ActionType := c.Query("action_type")
+	fmt.Println(UserId, ToUserId)
 	if ActionType == "1" {
 		response := logic.DoFollow(UserId, ToUserId)
 		c.JSON(http.StatusOK, response)
