@@ -19,8 +19,7 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 			status_code<int>:0成功|1失败
 			status_msg<string>:信息
 	*/
-	userId, _ := c.Get("user_id")
-	UserId := userId.(int64)
+	UserId := c.GetInt64("user_id")
 	toUserId := c.Query("to_user_id")
 	ToUserId, _ := strconv.ParseInt(toUserId, 10, 64)
 	ActionType := c.Query("action_type")
@@ -48,8 +47,7 @@ func (api *RelationAPI) FollowList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	userId := c.Query("user_id")
-	UserId, _ := strconv.ParseInt(userId, 10, 64)
+	UserId := c.GetInt64("user_id")
 	response := logic.SelectFollowList(UserId)
 	c.JSON(http.StatusOK, response)
 }
@@ -69,8 +67,7 @@ func (api *RelationAPI) FollowerList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	userId := c.Query("user_id")
-	UserId, _ := strconv.ParseInt(userId, 10, 64)
+	UserId := c.GetInt64("user_id")
 	response := logic.SelectFollowerList(UserId)
 	c.JSON(http.StatusOK, response)
 }
