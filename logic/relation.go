@@ -77,8 +77,8 @@ func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationRe
 			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 			return
 		}
-		if exist {
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow exist"))}
+		if !exist {
+			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow not exist"))}
 			return
 		}
 	}()

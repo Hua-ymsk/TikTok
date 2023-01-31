@@ -11,7 +11,7 @@ type FollowUser struct { //关注用户信息
 type RelationListResponse struct { //关注用户信息
 	StatusCode string       `json:"status_code"` //0成功|1失败
 	StatusMsg  string       `json:"status_msg"`  //返回状态描述
-	User       []FollowUser `json:"user"`        //用户信息
+	User       []FollowUser `json:"user_list"`   //用户信息
 }
 
 type RelationResponse struct { //关注用户信息
