@@ -1,24 +1,23 @@
 package controller
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"tiktok/common/utils"
 	"tiktok/logic"
-
 	"tiktok/models"
-
-	"github.com/gin-gonic/gin"
-
 )
 
 type UserAPI struct{}
+
+var salt string = "tiktok"
 
 func (api *UserAPI) Register(c *gin.Context) {
 	var logicregister logic.UserRegisterLogic
 	user := models.User{
 		UserName: c.Query("username"),
-		PassWord: utils.Md5(c.Query("password")),
+		PassWord: utils.Md5(c.Query("password"), salt),
 	}
 	response := logicregister.RegisterUser(user)
 	c.JSON(http.StatusOK, response)
@@ -29,7 +28,7 @@ func (api *UserAPI) Login(c *gin.Context) {
 	//获取注册数据
 	user := models.User{
 		UserName: c.Query("username"),
-		PassWord: utils.Md5(c.Query("password")),
+		PassWord: utils.Md5(c.Query("password"), salt),
 		NickName: c.Query("nickname"),
 	}
 	response := logiclogin.LoginUser(user)
