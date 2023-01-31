@@ -2,27 +2,8 @@ package dao
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 )
-
-// UserExist 检验该UserId对应用户是否存在
-func UserExist(UserId int64) (err error) {
-	sqlStatement := "SELECT * FROM users WHERE id=?;"
-	stmt, err := db.Prepare(sqlStatement)
-	if err != nil {
-		return fmt.Errorf("select init error: %w", err)
-	}
-	res, err := stmt.Query(UserId)
-	if err != nil {
-		return fmt.Errorf("select execute error: %w", err)
-	}
-	defer res.Close()
-	if res.Next() == false {
-		return errors.New("user not exist error")
-	}
-	return nil
-}
 
 // FollowExist 查询关注信息是否存在
 func FollowExist(UserId int64, ToUserId int64) (exist bool, err error) {

@@ -112,12 +112,6 @@ func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationRe
 // SelectFollowList 查询关注信息列表并格式化转换成JSON格式
 func SelectFollowList(UserId int64) (followListResponse types.RelationListResponse) {
 	var followUserList = make([]types.FollowUser, 0, 100)
-	//验证用户存在
-	err := dao.UserExist(UserId)
-	if err != nil {
-		followListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: followUserList}
-		return
-	}
 	//执行查询
 	rows, err := dao.SelectFollowList(UserId)
 	//错误处理
@@ -150,12 +144,6 @@ func SelectFollowList(UserId int64) (followListResponse types.RelationListRespon
 // SelectFollowerList 查询粉丝信息列表并格式化转换成JSON格式
 func SelectFollowerList(UserId int64) (followerListResponse types.RelationListResponse) {
 	var followerUserList = make([]types.FollowUser, 0, 100)
-	//验证用户存在
-	err := dao.UserExist(UserId)
-	if err != nil {
-		followerListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: followerUserList}
-		return
-	}
 	//执行查询
 	rows, err := dao.SelectFollowerList(UserId)
 	//错误处理
@@ -188,12 +176,6 @@ func SelectFollowerList(UserId int64) (followerListResponse types.RelationListRe
 // SelectFriendList 查询互关信息列表并格式化转换成JSON格式
 func SelectFriendList(UserId int64) (friendListResponse types.RelationListResponse) {
 	var friendUserList = make([]types.FollowUser, 0, 100)
-	//验证用户存在
-	err := dao.UserExist(UserId)
-	if err != nil {
-		friendListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
-		return
-	}
 	//执行查询
 	rows, err := dao.SelectFriendList(UserId)
 	//错误处理
