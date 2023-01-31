@@ -18,6 +18,7 @@ func (api *UserAPI) Register(c *gin.Context) {
 	user := models.User{
 		UserName: c.Query("username"),
 		PassWord: utils.Md5(c.Query("password"), salt),
+		NickName: c.Query("nickname"),
 	}
 	response := logicregister.RegisterUser(user)
 	c.JSON(http.StatusOK, response)
