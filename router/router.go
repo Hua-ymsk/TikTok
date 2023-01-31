@@ -24,12 +24,12 @@ func InitRouter() *gin.Engine {
 	{
 
 		// video apis
-		apiRouter.GET("/feed", videoAPI.FeedHandler)
+		apiRouter.GET("/feed/", videoAPI.FeedHandler)
 		video := apiRouter.Group("/publish")
 		video.Use(middleware.JWTAuth())
 		{
-			video.POST("/action", videoAPI.PublishHandler)
-			video.GET("/list", videoAPI.PublishListHandler)
+			video.POST("/action/", videoAPI.PublishHandler)
+			video.GET("/list/", videoAPI.PublishListHandler)
 		}
 		// extra apis - II
 		relation := apiRouter.Group("/relation")
@@ -43,22 +43,22 @@ func InitRouter() *gin.Engine {
 		favorite := apiRouter.Group("/favorite")
 		favorite.Use(middleware.JWTAuth())
 		{
-			favorite.POST("/action", favoriteAPI.FavoriteAction)
-			favorite.GET("/list", favoriteAPI.FavoriteList)
+			favorite.POST("/action/", favoriteAPI.FavoriteAction)
+			favorite.GET("/list/", favoriteAPI.FavoriteList)
 		}
 		// comment apis
 		comment := apiRouter.Group("/comment")
 		comment.Use(middleware.JWTAuth())
 		{
-			comment.POST("/action", commentAPI.CommentAction)
-			comment.GET("/list", commentAPI.CommentList)
+			comment.POST("/action/", commentAPI.CommentAction)
+			comment.GET("/list/", commentAPI.CommentList)
 		}
 		//user
 		user := apiRouter.Group("/user")
 		{
-			user.GET("", middleware.JWTAuth(), userAPI.UserInfo)
-			user.POST("/register", userAPI.Register)
-			user.POST("/login", userAPI.Login)
+			user.GET("/", middleware.JWTAuth(), userAPI.UserInfo)
+			user.POST("/register/", userAPI.Register)
+			user.POST("/login/", userAPI.Login)
 		}
 
 	}
