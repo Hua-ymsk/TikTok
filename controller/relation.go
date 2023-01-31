@@ -47,7 +47,8 @@ func (api *RelationAPI) FollowList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	UserId := c.GetInt64("user_id")
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
 	response := logic.SelectFollowList(UserId)
 	c.JSON(http.StatusOK, response)
 }
@@ -67,7 +68,8 @@ func (api *RelationAPI) FollowerList(c *gin.Context) { //
 				follower_count<int>:粉丝数
 				is_follow<bool>:是否已关注
 	*/
-	UserId := c.GetInt64("user_id")
+	userId := c.Query("user_id")
+	UserId, _ := strconv.ParseInt(userId, 10, 64)
 	response := logic.SelectFollowerList(UserId)
 	c.JSON(http.StatusOK, response)
 }
