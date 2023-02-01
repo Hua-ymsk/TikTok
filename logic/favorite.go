@@ -8,7 +8,7 @@ import (
 )
 
 // DoLike 执行赞操作
-func DoLike(userId, videoId string) types.FavoriteActionResp {
+func DoLike(userId int64, videoId string) types.FavoriteActionResp {
 	//查询赞是否存在
 	exist, err := mysql.LikeExist(userId, videoId)
 	if err != nil {
@@ -45,9 +45,18 @@ func DoLike(userId, videoId string) types.FavoriteActionResp {
 	}
 }
 
+// DoSelectLikeList 查询喜欢列表
 func DoSelectLikeList(userId string) types.FavoriteListResp {
+	userIdInt, errUser := strconv.Atoi(userId)
+	if errUser != nil {
+		return types.FavoriteListResp{
+			StatusCode: "1",
+			StatusMsg:  fmt.Sprintf("select likelist error:%v", errUser),
+			VideoList:  nil,
+		}
+	}
 	//查询喜欢列表
-	res, errRead := mysql.SelectLikeList(userId)
+	res, errRead := mysql.SelectLikeList(int64(userIdInt))
 	if errRead != nil {
 		return types.FavoriteListResp{
 			StatusCode: "1",
@@ -81,7 +90,7 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 	var likeList = make([]types.Video, 0, 100)
 	for _, videoInfo := range res {
 		var like types.Video
-		authorId := strconv.Itoa(int(videoInfo.UserID))
+		authorId := videoInfo.UserID
 		authorName, followCount, followerCount, isFollow, err := mysql.SelectUserInfo(authorId)
 		if err != nil {
 			return types.FavoriteListResp{
@@ -92,7 +101,7 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 		}
 		videoIdStr := strconv.Itoa(int(videoInfo.ID))
 		like.ID = videoInfo.ID
-		like.Author.UserID = videoInfo.UserID
+		like.Author.UserID = authorId
 		like.Author.Name = authorName
 		like.Author.FollowCount = followCount
 		like.Author.FollowerCount = followerCount
@@ -101,7 +110,7 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 		like.CoverURL = videoInfo.CoverURL
 		like.FavoriteCount = videoInfo.FavoriteCount
 		like.CommentCount = videoInfo.CommentCount
-		like.IsFavorite, err = mysql.LikeExist(userId, videoIdStr)
+		like.IsFavorite, err = mysql.LikeExist(int64(userIdInt), videoIdStr)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",

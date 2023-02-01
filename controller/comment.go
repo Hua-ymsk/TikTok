@@ -33,7 +33,7 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 		    }
 	*/
 	//使用中间件将token转化成user_id
-	userId := c.GetString("user_id")
+	userId := c.GetInt64("user_id")
 	videoId := c.Query("video_id")
 	actionType := c.Query("action_type")
 	commentId := c.Query("comment_id")
