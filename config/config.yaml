@@ -31,5 +31,5 @@ Video:
   CoverUrlPrefix: "http://static.tiktok.hymsk.asia/covers"
   PlayStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/videos"
   CoverStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/covers"
-  PageSize : 10
+  PageSize : 5
 
