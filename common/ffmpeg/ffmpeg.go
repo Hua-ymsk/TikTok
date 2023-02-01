@@ -13,7 +13,6 @@ import (
 )
 
 func MakeCover(videoName, coverName string) (cover_url string, err error) {
-	conf := setting.Conf.VideoConfig
 	filePath := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, videoName, "mp4")
 	buf := bytes.NewBuffer(nil)
 	err = ffmpeg.Input(filePath).
@@ -30,10 +29,8 @@ func MakeCover(videoName, coverName string) (cover_url string, err error) {
 		log.Println("decode err: ", err)
 		return
 	}
-	cover_url = conf.CoverUrlPrefix + coverName + ".jpg"
-	cover_dst := conf.CoverStaticPrefix + coverName + ".jpg"
-	fmt.Println(cover_url)
-	fmt.Println(cover_url)
+	cover_url = fmt.Sprintf("%s/%s.%s", setting.Conf.CoverUrlPrefix, coverName, "jpg")
+	cover_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.CoverStaticPrefix, coverName, "jpg")
 	if err = imaging.Save(img, cover_dst); err != nil {
 		log.Println("save png err:", err)
 		return
