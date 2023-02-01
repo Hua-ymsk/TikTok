@@ -33,7 +33,7 @@ func (logic *VideoLogic) Feed(latest_time int64) (list []types.Video, next_time 
 		fmt.Println("copy err:", err)
 		return nil, time.Now().Unix(), err
 	}
-	next_time = videos[setting.Conf.PageSize-1].TimeStamp
+	next_time = videos[len(videos)-1].TimeStamp
 
 	return
 }
