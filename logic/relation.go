@@ -4,47 +4,25 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"sync"
 	"tiktok/dao"
 	"tiktok/types"
 )
 
 // DoFollow 执行关注，先查询是否有对方关注信息存在，若存在修改标记并插入一条新信息；否则只插入一条新信息
 func DoFollow(UserId int64, ToUserId int64) (relationResponse types.RelationResponse) {
-	//同时进行我方关注信息查询与对方关注信息查询
-	var chanRes = make(chan types.RelationResponse, 2)
-	var chanExi = make(chan bool, 1)
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		//查询关注信息是否存在
-		defer wg.Done()
-		exist, err := dao.FollowExist(UserId, ToUserId)
-		if err != nil { //检验出现错误
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-			return
-		}
-		if exist {
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow exist"))}
-			return
-		}
-	}()
-	go func() {
-		//查询对方关注信息是否存在
-		defer wg.Done()
-		exist, err := dao.FollowExist(ToUserId, UserId)
-		if err != nil { //检验出现错误
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-			return
-		}
-		chanExi <- exist
-	}()
-	wg.Wait()
-	if len(chanRes) != 0 {
-		relationResponse = <-chanRes
-		return
+	//查询关注信息是否存在
+	exist, err := dao.FollowExist(UserId, ToUserId)
+	if err != nil { //检验出现错误
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 	}
-	exist := <-chanExi
+	if exist {
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow exist"))}
+	}
+	//查询对方关注信息是否存在
+	exist, err = dao.FollowExist(ToUserId, UserId)
+	if err != nil { //检验出现错误
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
+	}
 	if exist {
 		//有对方信息存在，修改标记并进行插入(0为未互关，1为已互关)
 		e := dao.UpdInsRelation(UserId, ToUserId)
@@ -64,40 +42,19 @@ func DoFollow(UserId int64, ToUserId int64) (relationResponse types.RelationResp
 
 // DoUnFollow 执行取消关注，先查询是否有对方关注信息存在，若存在修改标记并删除自己的关注信息；否则只删除自己的关注信息
 func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationResponse) {
-	//同时进行我方关注信息查询与对方关注信息查询
-	var chanRes = make(chan types.RelationResponse, 2)
-	var chanExi = make(chan bool, 1)
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		//查询关注信息是否存在
-		defer wg.Done()
-		exist, err := dao.FollowExist(UserId, ToUserId)
-		if err != nil { //检验出现错误
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-			return
-		}
-		if !exist {
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow not exist"))}
-			return
-		}
-	}()
-	go func() {
-		//查询对方关注信息是否存在
-		defer wg.Done()
-		exist, err := dao.FollowExist(ToUserId, UserId)
-		if err != nil { //检验出现错误
-			chanRes <- types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
-			return
-		}
-		chanExi <- exist
-	}()
-	wg.Wait()
-	if len(chanRes) != 0 {
-		relationResponse = <-chanRes
-		return
+	//查询关注信息是否存在
+	exist, err := dao.FollowExist(UserId, ToUserId)
+	if err != nil { //检验出现错误
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
 	}
-	exist := <-chanExi
+	if !exist {
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", errors.New("follow not exist"))}
+	}
+	//查询对方关注信息是否存在
+	exist, err = dao.FollowExist(ToUserId, UserId)
+	if err != nil { //检验出现错误
+		return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", err)}
+	}
 	if exist {
 		//有对方信息存在，修改标记(0为未互关，1为已互关)
 		e := dao.UpdDelRelation(ToUserId, UserId)
