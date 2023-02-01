@@ -2,48 +2,11 @@ package dao
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
-//// TokenResolution 解析Token获得userId
-//func TokenResolution(Token string) (userId string, err error) {
-//	//测试用
-//	userId, err = Token, nil
-//	////正式使用
-//	//claims, err := middleware.ParseToken(Token)
-//	//userId = claims.UserID
-//	return
-//}
-
-// UserExist 检验该UserId对应用户是否存在
-func UserExist(UserId int64) (err error) {
-	sqlStatement := "SELECT * FROM users WHERE id=?;"
-	stmt, err := db.Prepare(sqlStatement)
-	if err != nil {
-		return fmt.Errorf("select init error: %w", err)
-	}
-	res, err := stmt.Query(UserId)
-	if err != nil {
-		return fmt.Errorf("select execute error: %w", err)
-	}
-	defer res.Close()
-	if res.Next() == false {
-		return errors.New("user not exist error")
-	}
-	return nil
-}
-
 // FollowExist 查询关注信息是否存在
 func FollowExist(UserId int64, ToUserId int64) (exist bool, err error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return false, fmt.Errorf("parameter error: %w", err)
-	//}
-	//toUserId, err := strconv.Atoi(ToUserId)
-	//if err != nil {
-	//	return false, fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement := "SELECT * FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
@@ -62,14 +25,6 @@ func FollowExist(UserId int64, ToUserId int64) (exist bool, err error) {
 
 // InsertFollow 插入关注信息(0为未互关，1为已互关)
 func InsertFollow(UserId int64, ToUserId int64, Relationship int) (err error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
-	//toUserId, err := strconv.Atoi(ToUserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement := "INSERT INTO follows (`following_user_id`, `followed_user_id`, `relationship`) VALUES (?, ?, ?);"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
@@ -84,14 +39,6 @@ func InsertFollow(UserId int64, ToUserId int64, Relationship int) (err error) {
 
 // UpdateRelation 修改关注信息
 func UpdateRelation(UserId int64, ToUserId int64, Relationship int) (err error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
-	//toUserId, err := strconv.Atoi(ToUserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement := "UPDATE follows set relationship=? WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
@@ -106,14 +53,6 @@ func UpdateRelation(UserId int64, ToUserId int64, Relationship int) (err error) 
 
 // DeleteFollow 删除关注信息
 func DeleteFollow(UserId int64, ToUserId int64) (err error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
-	//toUserId, err := strconv.Atoi(ToUserId)
-	//if err != nil {
-	//	return fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement := "DELETE FROM follows WHERE following_user_id=? and followed_user_id=?;"
 	stmt, err := db.Prepare(sqlStatement)
 	if err != nil {
@@ -184,10 +123,6 @@ func UpdDelRelation(UserId int64, ToUserId int64) (err error) {
 
 // SelectFollowList 查询所有关注的信息列表
 func SelectFollowList(UserId int64) (*sql.Rows, error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return nil, fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement :=
 		`SELECT
 			users.id,
@@ -214,10 +149,6 @@ func SelectFollowList(UserId int64) (*sql.Rows, error) {
 
 // SelectFollowerList 查询所有粉丝的信息列表
 func SelectFollowerList(UserId int64) (*sql.Rows, error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return nil, fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement :=
 		`SELECT
 			users.id,
@@ -245,10 +176,6 @@ func SelectFollowerList(UserId int64) (*sql.Rows, error) {
 
 // SelectFriendList 查询所有互关的信息列表
 func SelectFriendList(UserId int64) (*sql.Rows, error) {
-	//userId, err := strconv.Atoi(UserId)
-	//if err != nil {
-	//	return nil, fmt.Errorf("parameter error: %w", err)
-	//}
 	sqlStatement :=
 		`SELECT
 			users.id,

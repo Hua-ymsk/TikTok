@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"database/sql"
 	"fmt"
 	"strconv"
 	"tiktok/models"
@@ -39,8 +38,8 @@ func InsertLikeInfo(userId, videoId string) error {
 		return fmt.Errorf("string to int error:%v", err)
 	}
 	var likeInfo = &models.Like{
-		UserId:  userIdInt,
-		VideoId: videoIdInt,
+		UserId:  int64(userIdInt),
+		VideoId: int64(videoIdInt),
 	}
 	res := db.Create(likeInfo)
 	if res.Error != nil {
@@ -51,37 +50,44 @@ func InsertLikeInfo(userId, videoId string) error {
 
 // DeleteLikeInfo 删除点赞信息
 func DeleteLikeInfo(userId, videoId string) error {
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil {
-		return fmt.Errorf("string to int error:%v", err)
+	userIdInt, errUser := strconv.Atoi(userId)
+	if errUser != nil {
+		return fmt.Errorf("string to int error:%v", errUser)
 	}
-	videoIdInt, err := strconv.Atoi(videoId)
-	if err != nil {
-		return fmt.Errorf("string to int error:%v", err)
+	videoIdInt, errVideo := strconv.Atoi(videoId)
+	if errVideo != nil {
+		return fmt.Errorf("string to int error:%v", errVideo)
 	}
 	var like = make([]*models.Like, 0)
 	res := db.Where("user_id = ? AND video_id = ?", userIdInt, videoIdInt).Delete(&like)
 	if res.Error != nil {
-		return fmt.Errorf("delete like error: %v", err)
+		return fmt.Errorf("delete like error: %v", res.Error)
 	}
 	return nil
 }
 
 // SelectLikeList 查询喜欢列表
-func SelectLikeList(userId string) (*sql.Rows, error) {
+func SelectLikeList(userId string) ([]*models.Video, error) {
 	userIdInt, err := strconv.Atoi(userId)
 	if err != nil {
 		return nil, fmt.Errorf("string to int error:%v", err)
 	}
 	var likes = make([]*models.Like, 0)
-	res := db.Where("user_id = ?", userIdInt).Find(&likes)
+	resLike := db.Where("user_id = ?", userIdInt).Find(&likes)
 	//检查是否找到数据
-	if len(likes) == 0 {
-		return nil, fmt.Errorf("select likelist id null")
+	if resLike.RowsAffected == 0 {
+		return nil, fmt.Errorf("query likelist is null")
 	}
-	resRows, errRows := res.Rows()
-	if errRows != nil {
-		return nil, fmt.Errorf("select likelist row error:%v", errRows)
+	//将video_id存进切片，为获取video信息
+	var videoIds = make([]int64, 0, 100)
+	for _, like := range likes {
+		videoIds = append(videoIds, like.VideoId)
 	}
-	return resRows, nil
+	//获取video信息
+	var videos = make([]*models.Video, 0)
+	resVideo := db.Where("id IN ?", videoIds).Find(&videos)
+	if resVideo.RowsAffected == 0 {
+		return nil, fmt.Errorf("query videoinfo is null")
+	}
+	return videos, nil
 }
