@@ -45,11 +45,17 @@ func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, user
 	if errConv != nil {
 		return models.Comment{}, models.User{}, fmt.Errorf("string to int error:%v", errConv)
 	}
-	resComment := db.Where("id = ?", commentIdInt).Find(&commentInfo)
+	resComment := db.Where("id = ?", commentIdInt).First(&commentInfo)
+	if resComment.Error != nil {
+		return models.Comment{}, models.User{}, fmt.Errorf("commentid error:%v", resComment.Error)
+	}
 	if resComment.RowsAffected == 0 {
 		return models.Comment{}, models.User{}, fmt.Errorf("commentid no exist")
 	}
-	resUser := db.Where("id = ?", commentInfo.UserId).Find(&userInfo)
+	resUser := db.Where("id = ?", commentInfo.UserId).First(&userInfo)
+	if resUser.Error != nil {
+		return models.Comment{}, models.User{}, fmt.Errorf("userid error:%v", resUser.Error)
+	}
 	if resUser.RowsAffected == 0 {
 		return models.Comment{}, models.User{}, fmt.Errorf("user no exist")
 	}
@@ -59,7 +65,10 @@ func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, user
 // SelectUserInfo 通过用户id获取用户信息
 func SelectUserInfo(userId int64) (userName string, followCount, followerCount int64, isFollow bool, err error) {
 	var user models.User
-	res := db.Where("id = ?", userId).Find(&user)
+	res := db.Where("id = ?", userId).First(&user)
+	if res.Error != nil {
+		return "", 0, 0, false, fmt.Errorf("select comment userinfo error:%v", res.Error)
+	}
 	//检查是否找到数据
 	if res.RowsAffected == 0 {
 		return "", 0, 0, false, fmt.Errorf("user no exist")
@@ -76,7 +85,7 @@ func SelectCommentList(videoId string) ([]*models.Comment, error) {
 	var comments = make([]*models.Comment, 0)
 	res := db.Where("video_id = ?", videoIdInt).Find(&comments)
 	if res.RowsAffected == 0 {
-		return nil, fmt.Errorf("select comment error")
+		return nil, nil
 	}
 	return comments, nil
 }

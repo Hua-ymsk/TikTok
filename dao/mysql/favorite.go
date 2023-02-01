@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"strconv"
 	"tiktok/models"
 )
@@ -13,9 +14,9 @@ func LikeExist(userId int64, videoId string) (bool, error) {
 		return false, fmt.Errorf("string to int error:%v", err)
 	}
 	var like = make([]*models.Like, 0)
-	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Find(&like)
-	if res.Error != nil {
-		return false, fmt.Errorf("like action error: %v", err)
+	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).First(&like)
+	if res.Error != gorm.ErrRecordNotFound && res.Error != nil {
+		return false, fmt.Errorf("like action error: %v", res.Error)
 	}
 	if res.RowsAffected == 0 {
 		return false, nil
@@ -61,7 +62,7 @@ func SelectLikeList(userId int64) ([]*models.Video, error) {
 	resLike := db.Where("user_id = ?", userId).Find(&likes)
 	//检查是否找到数据
 	if resLike.RowsAffected == 0 {
-		return nil, fmt.Errorf("query likelist is null")
+		return nil, nil
 	}
 	//将video_id存进切片，为获取video信息
 	var videoIds = make([]int64, 0, 100)
@@ -72,7 +73,7 @@ func SelectLikeList(userId int64) ([]*models.Video, error) {
 	var videos = make([]*models.Video, 0)
 	resVideo := db.Where("id IN ?", videoIds).Find(&videos)
 	if resVideo.RowsAffected == 0 {
-		return nil, fmt.Errorf("query videoinfo is null")
+		return nil, nil
 	}
 	return videos, nil
 }

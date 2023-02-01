@@ -27,7 +27,7 @@ func (api *FavoriteAPI) FavoriteAction(c *gin.Context) {
 		response := logic.DoLike(userId, videoId)
 		c.JSON(http.StatusOK, response)
 	} else if actionType == "2" {
-		response := logic.DoLike(userId, videoId)
+		response := logic.DoUnlike(userId, videoId)
 		c.JSON(http.StatusOK, response)
 	}
 }
