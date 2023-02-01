@@ -9,23 +9,15 @@ import (
 )
 
 // DoCommentAction 执行评论操作
-func DoCommentAction(userId int64, videoId, commentText, commentId string) types.CommentActionResp {
+func DoCommentAction(userId int64, videoId, commentText string) types.CommentActionResp {
 	//评论操作
 	timestamp := time.Now().Unix()
-	errIn := mysql.InsertCommentInfo(userId, videoId, commentText, timestamp)
+	commentId, errIn := mysql.InsertCommentInfo(userId, timestamp, videoId, commentText)
 	if errIn != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
 			StatusCode: 1,
 			StatusMsg:  fmt.Sprintf("insert commentinfo error:%v", errIn),
-		}
-	}
-	commentIdInt, errCid := strconv.Atoi(commentId)
-	if errCid != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("string to int error:%v", errCid),
 		}
 	}
 	//查询评论用户的信息
@@ -50,7 +42,7 @@ func DoCommentAction(userId int64, videoId, commentText, commentId string) types
 		Comment: types.Comment{
 			Content:    commentText,
 			CreateDate: commentTimeStr,
-			ID:         int64(commentIdInt),
+			ID:         commentId,
 			User: types.User{
 				FollowCount:   followCount,
 				FollowerCount: followerCount,

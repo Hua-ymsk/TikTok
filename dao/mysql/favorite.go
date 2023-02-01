@@ -30,7 +30,7 @@ func InsertLikeInfo(userId int64, videoId string) error {
 		return fmt.Errorf("string to int error:%v", err)
 	}
 	var likeInfo = &models.Like{
-		UserId:  int64(userId),
+		UserId:  userId,
 		VideoId: int64(videoIdInt),
 	}
 	res := db.Create(likeInfo)

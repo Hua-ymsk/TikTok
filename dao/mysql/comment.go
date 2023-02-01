@@ -7,10 +7,10 @@ import (
 )
 
 // InsertCommentInfo 添加评论信息
-func InsertCommentInfo(userId int64, videoId, commentText string, timestamp int64) error {
+func InsertCommentInfo(userId, timestamp int64, videoId, commentText string) (int64, error) {
 	videoIdInt, errVideo := strconv.Atoi(videoId)
 	if errVideo != nil {
-		return fmt.Errorf("string to int error:%v", errVideo)
+		return 0, fmt.Errorf("string to int error:%v", errVideo)
 	}
 	commentInfo := &models.Comment{
 		UserId:    userId,
@@ -20,9 +20,9 @@ func InsertCommentInfo(userId int64, videoId, commentText string, timestamp int6
 	}
 	res := db.Create(commentInfo)
 	if res.Error != nil {
-		return fmt.Errorf("insert commentinfo error:%v", res.Error)
+		return 0, fmt.Errorf("insert commentinfo error:%v", res.Error)
 	}
-	return nil
+	return commentInfo.ID, nil
 }
 
 // DeleteCommentInfo 删除评论信息

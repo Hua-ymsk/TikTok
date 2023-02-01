@@ -36,12 +36,12 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 	userId := c.GetInt64("user_id")
 	videoId := c.Query("video_id")
 	actionType := c.Query("action_type")
-	commentId := c.Query("comment_id")
 	if actionType == "1" {
 		commentText := c.Query("comment_text")
-		response := logic.DoCommentAction(userId, videoId, commentText, commentId)
+		response := logic.DoCommentAction(userId, videoId, commentText)
 		c.JSON(http.StatusOK, response)
 	} else if actionType == "2" {
+		commentId := c.Query("comment_id")
 		response := logic.DoUnCommentAction(commentId)
 		c.JSON(http.StatusOK, response)
 	}
