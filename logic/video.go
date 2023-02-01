@@ -83,9 +83,10 @@ func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.
 		return nil, err
 	}
 	// 是否点赞
-	// for video := range list {
-
-	// }
+	sender_id := c.GetInt64("user_id")
+	for _, video := range list {
+		mysql.CheckFavorite(sender_id, video.ID)
+	}
 
 	// 作者信息(等jack写完)
 
