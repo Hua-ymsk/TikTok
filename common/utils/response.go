@@ -10,7 +10,7 @@ type Response struct {
 type CResponse struct {
 	StatusCode int64       `json:"status_code"`
 	StatusMsg  string      `json:"status_msg"`
-	Data       interface{} `json:"data,omitempty"`
+	Data       interface{} `json:"user"`
 }
 
 func CommonResponse(code int64, message string, userid int64, token string) Response {

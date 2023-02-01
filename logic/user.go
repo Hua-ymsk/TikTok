@@ -41,7 +41,7 @@ func (logic *UserRegisterLogic) RegisterUser(user models.User) utils.Response {
 	userid := mysql.RegisterUser(&user)
 	//生成token
 	atoken, _, _ := middleware.GenToken(userid)
-	return utils.CommonResponse(1, "用户注册成功", userid, atoken)
+	return utils.CommonResponse(0, "用户注册成功", userid, atoken)
 }
 
 func (logic *UserLoginLogic) LoginUser(user models.User) utils.Response {
@@ -68,7 +68,7 @@ func (logic *UserLoginLogic) LoginUser(user models.User) utils.Response {
 	//生成token
 	atoken, _, _ := middleware.GenToken(userid)
 
-	return utils.CommonResponse(1, "用户登录成功", userid, atoken)
+	return utils.CommonResponse(0, "用户登录成功", userid, atoken)
 }
 
 func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {

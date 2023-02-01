@@ -1,6 +1,6 @@
 name: "sample-tiktok"
 mode: "dev"
-port: 9090
+port: 2024
 start_time: "2022-02-09"
 machine_id: 1
 
@@ -27,7 +27,9 @@ Mysql:
   Max_idle_conns: 50
 
 Video:
-  PlayUrlPrefix: "E:/Project/GoProject/tiktok-static/static/videos/"
-  CoverUrlPrefix: "E:/Project/GoProject/tiktok-static/static/covers/"
+  PlayUrlPrefix: "http://static.tiktok.hymsk.asia/videos"
+  CoverUrlPrefix: "http://static.tiktok.hymsk.asia/covers"
+  PlayStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/videos"
+  CoverStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/covers"
   PageSize : 10
 

@@ -33,7 +33,7 @@ func (logic *VideoLogic) Feed(latest_time int64) (list []types.Video, next_time 
 		fmt.Println("copy err:", err)
 		return nil, time.Now().Unix(), err
 	}
-	next_time = videos[setting.Conf.PageSize-1].TimeStamp
+	next_time = videos[len(videos)-1].TimeStamp
 
 	return
 }
@@ -45,8 +45,9 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	content_type := strings.Split(data.Header["Content-Type"][0], "/")
 	video_type := content_type[1]
 	// 拼接play_url
-	dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, video_type)
-	if err := c.SaveUploadedFile(data, dst); err != nil {
+	play_url := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, video_type)
+	play_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, vidoName, video_type)
+	if err := c.SaveUploadedFile(data, play_dst); err != nil {
 		log.Println("save err:", err)
 		return err
 	}
@@ -54,13 +55,13 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	coverName := strconv.FormatUint(snowflake.GetID(), 10)
 	cover_url, err := ffmpeg.MakeCover(vidoName, coverName)
 	if err != nil {
-		log.Println("make cover err: ", err)
+		log.Println("make covers err: ", err)
 		return
 	}
 	// 保存（200ms）
 	video := &models.Video{
 		UserID:    c.GetInt64("user_id"),
-		PlayURL:   dst,
+		PlayURL:   play_url,
 		CoverURL:  cover_url,
 		Title:     title,
 		TimeStamp: time.Now().Unix(),
@@ -83,12 +84,12 @@ func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.
 		return nil, err
 	}
 	// 是否点赞
-	// for video := range list {
-
-	// }
+	sender_id := c.GetInt64("user_id")
+	for _, video := range list {
+		mysql.CheckFavorite(sender_id, video.ID)
+	}
 
 	// 作者信息(等jack写完)
-
 
 	return
 }
