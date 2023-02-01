@@ -9,31 +9,15 @@ import (
 )
 
 // DoCommentAction 执行评论操作
-func DoCommentAction(userId, videoId, commentText, commentId string) types.CommentActionResp {
+func DoCommentAction(userId int64, videoId, commentText string) types.CommentActionResp {
 	//评论操作
 	timestamp := time.Now().Unix()
-	errIn := mysql.InsertCommentInfo(userId, videoId, commentText, timestamp)
+	commentId, errIn := mysql.InsertCommentInfo(userId, timestamp, videoId, commentText)
 	if errIn != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
 			StatusCode: 1,
 			StatusMsg:  fmt.Sprintf("insert commentinfo error:%v", errIn),
-		}
-	}
-	userIdInt, errUid := strconv.Atoi(userId)
-	if errUid != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("string to int error:%v", errUid),
-		}
-	}
-	commentIdInt, errCid := strconv.Atoi(commentId)
-	if errCid != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("string to int error:%v", errCid),
 		}
 	}
 	//查询评论用户的信息
@@ -58,11 +42,11 @@ func DoCommentAction(userId, videoId, commentText, commentId string) types.Comme
 		Comment: types.Comment{
 			Content:    commentText,
 			CreateDate: commentTimeStr,
-			ID:         int64(commentIdInt),
+			ID:         commentId,
 			User: types.User{
 				FollowCount:   followCount,
 				FollowerCount: followerCount,
-				UserID:        int64(userIdInt),
+				UserID:        userId,
 				IsFollow:      isFollow,
 				Name:          userName,
 			},
@@ -132,7 +116,7 @@ func DoCommentList(videoId string) types.CommentListResp {
 	var commentList = make([]types.Comment, 0, 100)
 	for _, comment := range comments {
 		var commentTemp types.Comment
-		userId := strconv.Itoa(int(comment.UserId))
+		userId := comment.UserId
 		userName, followCount, followerCount, isFollow, err := mysql.SelectUserInfo(userId)
 		if err != nil {
 			return types.CommentListResp{

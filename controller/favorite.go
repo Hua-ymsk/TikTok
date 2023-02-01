@@ -20,7 +20,7 @@ func (api *FavoriteAPI) FavoriteAction(c *gin.Context) {
 			status_msg<string>:返回状态描述
 	*/
 	//使用中间件将token转化成user_id
-	userId := c.GetString("user_id")
+	userId := c.GetInt64("user_id")
 	videoId := c.Query("video_id")
 	actionType := c.Query("action_type")
 	if actionType == "1" {

@@ -7,26 +7,22 @@ import (
 )
 
 // InsertCommentInfo 添加评论信息
-func InsertCommentInfo(userId, videoId, commentText string, timestamp int64) error {
-	userIdInt, errUser := strconv.Atoi(userId)
-	if errUser != nil {
-		return fmt.Errorf("string to int error:%v", errUser)
-	}
+func InsertCommentInfo(userId, timestamp int64, videoId, commentText string) (int64, error) {
 	videoIdInt, errVideo := strconv.Atoi(videoId)
 	if errVideo != nil {
-		return fmt.Errorf("string to int error:%v", errUser)
+		return 0, fmt.Errorf("string to int error:%v", errVideo)
 	}
 	commentInfo := &models.Comment{
-		UserId:    int64(userIdInt),
+		UserId:    userId,
 		VideoId:   int64(videoIdInt),
 		Timestamp: timestamp,
 		Content:   commentText,
 	}
 	res := db.Create(commentInfo)
 	if res.Error != nil {
-		return fmt.Errorf("insert commentinfo error:%v", res.Error)
+		return 0, fmt.Errorf("insert commentinfo error:%v", res.Error)
 	}
-	return nil
+	return commentInfo.ID, nil
 }
 
 // DeleteCommentInfo 删除评论信息
@@ -61,13 +57,9 @@ func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, user
 }
 
 // SelectUserInfo 通过用户id获取用户信息
-func SelectUserInfo(userId string) (userName string, followCount, followerCount int64, isFollow bool, err error) {
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil {
-		return "", 0, 0, false, fmt.Errorf("string to int error:%v", err)
-	}
+func SelectUserInfo(userId int64) (userName string, followCount, followerCount int64, isFollow bool, err error) {
 	var user models.User
-	res := db.Where("id = ?", userIdInt).Find(&user)
+	res := db.Where("id = ?", userId).Find(&user)
 	//检查是否找到数据
 	if res.RowsAffected == 0 {
 		return "", 0, 0, false, fmt.Errorf("user no exist")

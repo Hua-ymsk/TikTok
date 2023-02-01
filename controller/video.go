@@ -6,6 +6,7 @@ import (
 	"tiktok/common/result"
 	"tiktok/logic"
 	"tiktok/types"
+	jwt "tiktok/middleware"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,18 @@ func (api *VideoAPI) FeedHandler(c *gin.Context) {
 		latest = time.Unix(tmp, 0).Unix()
 	}
 	l := logic.NewVideoLogic()
-	feed, next_time, err := l.Feed(latest)
+	// 用户登录状态下获取token 解析user_id
+	tokenStr := c.Query("token")
+	var sender_id int64
+	if tokenStr != "" {
+		mc, err := jwt.ParseToken(tokenStr)
+		if err != nil {
+			result.ResponseErr(c, "令牌无效或过期")
+			return
+		}
+		sender_id = mc.UserID
+	}
+	feed, next_time, err := l.Feed(latest, sender_id)
 	if err != nil {
 		result.ResponseErr(c, "获取视频流失败")
 	}
@@ -72,7 +84,8 @@ func (api *VideoAPI) PublishListHandler(c *gin.Context) {
 		result.ResponseErr(c, "参数错误")
 		return
 	}
-	videoList, err := l.VideoList(c, user_id)
+	sender_id := c.GetInt64("user_id")
+	videoList, err := l.VideoList(user_id, sender_id)
 	if err != nil {
 		result.ResponseErr(c, "查询错误")
 		return

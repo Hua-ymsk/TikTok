@@ -7,17 +7,13 @@ import (
 )
 
 // LikeExist 查询是否已经点赞
-func LikeExist(userId, videoId string) (bool, error) {
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil {
-		return false, fmt.Errorf("string to int error:%v", err)
-	}
+func LikeExist(userId int64, videoId string) (bool, error) {
 	videoIdInt, err := strconv.Atoi(videoId)
 	if err != nil {
 		return false, fmt.Errorf("string to int error:%v", err)
 	}
 	var like = make([]*models.Like, 0)
-	res := db.Where("user_id = ? AND video_id = ?", userIdInt, videoIdInt).Find(&like)
+	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Find(&like)
 	if res.Error != nil {
 		return false, fmt.Errorf("like action error: %v", err)
 	}
@@ -28,17 +24,13 @@ func LikeExist(userId, videoId string) (bool, error) {
 }
 
 // InsertLikeInfo 添加点赞信息
-func InsertLikeInfo(userId, videoId string) error {
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil {
-		return fmt.Errorf("string to int error:%v", err)
-	}
+func InsertLikeInfo(userId int64, videoId string) error {
 	videoIdInt, err := strconv.Atoi(videoId)
 	if err != nil {
 		return fmt.Errorf("string to int error:%v", err)
 	}
 	var likeInfo = &models.Like{
-		UserId:  int64(userIdInt),
+		UserId:  userId,
 		VideoId: int64(videoIdInt),
 	}
 	res := db.Create(likeInfo)
@@ -49,17 +41,14 @@ func InsertLikeInfo(userId, videoId string) error {
 }
 
 // DeleteLikeInfo 删除点赞信息
-func DeleteLikeInfo(userId, videoId string) error {
-	userIdInt, errUser := strconv.Atoi(userId)
-	if errUser != nil {
-		return fmt.Errorf("string to int error:%v", errUser)
-	}
+func DeleteLikeInfo(userId int64, videoId string) error {
+
 	videoIdInt, errVideo := strconv.Atoi(videoId)
 	if errVideo != nil {
 		return fmt.Errorf("string to int error:%v", errVideo)
 	}
 	var like = make([]*models.Like, 0)
-	res := db.Where("user_id = ? AND video_id = ?", userIdInt, videoIdInt).Delete(&like)
+	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Delete(&like)
 	if res.Error != nil {
 		return fmt.Errorf("delete like error: %v", res.Error)
 	}
@@ -67,13 +56,9 @@ func DeleteLikeInfo(userId, videoId string) error {
 }
 
 // SelectLikeList 查询喜欢列表
-func SelectLikeList(userId string) ([]*models.Video, error) {
-	userIdInt, err := strconv.Atoi(userId)
-	if err != nil {
-		return nil, fmt.Errorf("string to int error:%v", err)
-	}
+func SelectLikeList(userId int64) ([]*models.Video, error) {
 	var likes = make([]*models.Like, 0)
-	resLike := db.Where("user_id = ?", userIdInt).Find(&likes)
+	resLike := db.Where("user_id = ?", userId).Find(&likes)
 	//检查是否找到数据
 	if resLike.RowsAffected == 0 {
 		return nil, fmt.Errorf("query likelist is null")
