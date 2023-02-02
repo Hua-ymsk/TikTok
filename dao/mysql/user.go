@@ -25,7 +25,6 @@ func RegisterUser(user *models.User) (userid int64) {
 	return user.ID
 }
 func QueryUserID(userId int64, usernowId any) (responseUser *models.User, isFollow bool, err error) {
-	//var user models.User
 	var userNow models.User
 	var follow models.Follow
 	res := db.Where("id", userId).Take(&responseUser)
