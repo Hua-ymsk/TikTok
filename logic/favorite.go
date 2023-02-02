@@ -110,7 +110,7 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 		like.CoverURL = videoInfo.CoverURL
 		like.FavoriteCount = videoInfo.FavoriteCount
 		like.CommentCount = videoInfo.CommentCount
-		like.IsFavorite, err = mysql.LikeExist(int64(userIdInt), videoIdStr)
+		like.IsFavorite, err = mysql.LikeExist(userIdNow, videoIdStr)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",
