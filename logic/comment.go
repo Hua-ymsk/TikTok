@@ -60,11 +60,11 @@ func DoCommentAction(userId, videoId, commentText, commentId string) types.Comme
 			CreateDate: commentTimeStr,
 			ID:         int64(commentIdInt),
 			User: types.User{
-				FollowCount:   followCount,
-				FollowerCount: followerCount,
-				UserID:        int64(userIdInt),
-				IsFollow:      isFollow,
-				Name:          userName,
+				Follows:  followCount,
+				Fans:     followerCount,
+				ID:       int64(userIdInt),
+				IsFollow: isFollow,
+				NickName: userName,
 			},
 		},
 		StatusCode: 0,
@@ -107,11 +107,11 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 			CreateDate: commentTimeStr,
 			ID:         commentInfo.ID,
 			User: types.User{
-				FollowCount:   userInfo.Follows,
-				FollowerCount: userInfo.Fans,
-				UserID:        userInfo.ID,
-				IsFollow:      userInfo.IsFollow,
-				Name:          userInfo.UserName,
+				Follows:  userInfo.Follows,
+				Fans:     userInfo.Fans,
+				ID:       userInfo.ID,
+				IsFollow: userInfo.IsFollow,
+				NickName: userInfo.UserName,
 			},
 		},
 		StatusCode: 0,
@@ -151,10 +151,10 @@ func DoCommentList(videoId string) types.CommentListResp {
 		//合并month和day
 		commentTimeStr := commentTimeMonthStr + ":" + commentTimeDayStr
 		commentTemp.ID = comment.ID
-		commentTemp.User.UserID = comment.UserId
-		commentTemp.User.Name = userName
-		commentTemp.User.FollowCount = followCount
-		commentTemp.User.FollowerCount = followerCount
+		commentTemp.User.ID = comment.UserId
+		commentTemp.User.NickName = userName
+		commentTemp.User.Follows = followCount
+		commentTemp.User.Fans = followerCount
 		commentTemp.User.IsFollow = isFollow
 		commentTemp.Content = comment.Content
 		commentTemp.CreateDate = commentTimeStr

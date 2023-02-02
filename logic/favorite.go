@@ -92,10 +92,10 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 		}
 		videoIdStr := strconv.Itoa(int(videoInfo.ID))
 		like.ID = videoInfo.ID
-		like.Author.UserID = videoInfo.UserID
-		like.Author.Name = authorName
-		like.Author.FollowCount = followCount
-		like.Author.FollowerCount = followerCount
+		like.Author.ID = videoInfo.UserID
+		like.Author.NickName = authorName
+		like.Author.Follows = followCount
+		like.Author.Fans = followerCount
 		like.Author.IsFollow = isFollow
 		like.PlayURL = videoInfo.PlayURL
 		like.CoverURL = videoInfo.CoverURL
