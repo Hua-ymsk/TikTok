@@ -5,7 +5,6 @@ import (
 	"log"
 	"mime/multipart"
 	"strconv"
-	"strings"
 	"tiktok/common/ffmpeg"
 	"tiktok/common/snowflake"
 	"tiktok/dao/mysql"
@@ -52,11 +51,11 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	// 雪花算法生成视频名
 	vidoName := strconv.FormatUint(snowflake.GetID(), 10)
 	// 获取类型
-	content_type := strings.Split(data.Header["Content-Type"][0], "/")
-	video_type := content_type[1]
+	// content_type := strings.Split(data.Header["Content-Type"][0], "/")
+	// video_type := content_type[1]
 	// 拼接play_url
-	play_url := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, video_type)
-	play_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, vidoName, video_type)
+	play_url := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, "mp4")
+	play_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, vidoName, "mp4")
 	if err := c.SaveUploadedFile(data, play_dst); err != nil {
 		log.Println("save err:", err)
 		return err
