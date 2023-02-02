@@ -81,11 +81,12 @@ func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
 	if err != nil {
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
-	responseUser.IsFollow = isfollow
+
 	if err := copier.Copy(&responseUser, &CheckUser); err != nil {
 		fmt.Println("copy err:", err)
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
+	responseUser.IsFollow = isfollow
 
 	return utils.CCResponse(0, "用户信息获取成功", responseUser)
 }
