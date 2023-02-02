@@ -133,7 +133,6 @@ func SelectFollowList(UserId int64) (*sql.Rows, error) {
 		FROM
 			users
 			LEFT JOIN follows f ON users.id = f.followed_user_id
-			LEFT JOIN follows d ON users.id = f.following_user_id 
 		WHERE
 			f.following_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
@@ -160,7 +159,6 @@ func SelectFollowerList(UserId int64) (*sql.Rows, error) {
 		FROM
 			users
 			LEFT JOIN follows f ON users.id = f.following_user_id 
-			LEFT JOIN follows d ON users.id = f.followed_user_id
 		WHERE
 			f.followed_user_id = ?;`
 	stmt, err := db.Prepare(sqlStatement)
@@ -186,7 +184,6 @@ func SelectFriendList(UserId int64) (*sql.Rows, error) {
 		FROM
 			users
 			LEFT JOIN follows f ON users.id = f.followed_user_id
-			LEFT JOIN follows d ON users.id = f.following_user_id 
 		WHERE
 			f.following_user_id = ? and f.relationship = 1;`
 	stmt, err := db.Prepare(sqlStatement)
