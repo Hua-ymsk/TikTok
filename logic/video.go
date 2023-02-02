@@ -5,7 +5,6 @@ import (
 	"log"
 	"mime/multipart"
 	"strconv"
-	"strings"
 	"tiktok/common/ffmpeg"
 	"tiktok/common/snowflake"
 	"tiktok/dao/mysql"
@@ -24,7 +23,7 @@ func NewVideoLogic() *VideoLogic {
 	return &VideoLogic{}
 }
 
-func (logic *VideoLogic) Feed(latest_time int64) (list []types.Video, next_time int64, err error) {
+func (logic *VideoLogic) Feed(latest_time int64, sender_id int64) (list []types.Video, next_time int64, err error) {
 	videos, err := mysql.GetVideosByLatestTime(latest_time)
 	if err != nil {
 		return nil, time.Now().Unix(), err
@@ -34,6 +33,16 @@ func (logic *VideoLogic) Feed(latest_time int64) (list []types.Video, next_time 
 		return nil, time.Now().Unix(), err
 	}
 	next_time = videos[len(videos)-1].TimeStamp
+	// send_id为0，用户未登录，不查点赞信息
+	if sender_id == 0 {
+		return
+	}
+	for index, video := range list {
+		list[index].IsFavorite, err = mysql.CheckFavorite(sender_id, video.ID)
+		if err != nil {
+			break
+		}
+	}
 
 	return
 }
@@ -42,11 +51,11 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	// 雪花算法生成视频名
 	vidoName := strconv.FormatUint(snowflake.GetID(), 10)
 	// 获取类型
-	content_type := strings.Split(data.Header["Content-Type"][0], "/")
-	video_type := content_type[1]
+	// content_type := strings.Split(data.Header["Content-Type"][0], "/")
+	// video_type := content_type[1]
 	// 拼接play_url
-	play_url := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, video_type)
-	play_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, vidoName, video_type)
+	play_url := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayUrlPrefix, vidoName, "mp4")
+	play_dst := fmt.Sprintf("%s/%s.%s", setting.Conf.PlayStaticPrefix, vidoName, "mp4")
 	if err := c.SaveUploadedFile(data, play_dst); err != nil {
 		log.Println("save err:", err)
 		return err
@@ -72,7 +81,7 @@ func (logic *VideoLogic) SaveVideo(c *gin.Context, data *multipart.FileHeader, t
 	return
 }
 
-func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.Video, err error) {
+func (logic *VideoLogic) VideoList(user_id, sender_id int64) (list []types.Video, err error) {
 	// 对官方给出的发布列表响应存疑
 	// 不该每个video中都要求author信息，数据冗杂
 	// 暂不查询author
@@ -83,10 +92,12 @@ func (logic *VideoLogic) VideoList(c *gin.Context, user_id int64) (list []types.
 		fmt.Println("copy err:", err)
 		return nil, err
 	}
-	// 是否点赞
-	sender_id := c.GetInt64("user_id")
-	for _, video := range list {
-		mysql.CheckFavorite(sender_id, video.ID)
+	// 发起请求的用户是否点赞
+	for index, video := range list {
+		list[index].IsFavorite, err = mysql.CheckFavorite(sender_id, video.ID)
+		if err != nil {
+			break
+		}
 	}
 
 	// 作者信息(等jack写完)

@@ -20,14 +20,14 @@ func (api *FavoriteAPI) FavoriteAction(c *gin.Context) {
 			status_msg<string>:返回状态描述
 	*/
 	//使用中间件将token转化成user_id
-	userId := c.GetString("user_id")
+	userId := c.GetInt64("user_id")
 	videoId := c.Query("video_id")
 	actionType := c.Query("action_type")
 	if actionType == "1" {
 		response := logic.DoLike(userId, videoId)
 		c.JSON(http.StatusOK, response)
 	} else if actionType == "2" {
-		response := logic.DoLike(userId, videoId)
+		response := logic.DoUnlike(userId, videoId)
 		c.JSON(http.StatusOK, response)
 	}
 }
@@ -55,7 +55,9 @@ func (api *FavoriteAPI) FavoriteList(c *gin.Context) {
 		            is_favorite<bool>:true-已点赞，false-未点赞
 		            title<string>:视频标题
 	*/
+	//使用中间件将token转化成user_id
+	userIdNow := c.GetInt64("user_id")
 	userId := c.Query("user_id")
-	response := logic.DoSelectLikeList(userId)
+	response := logic.DoSelectLikeList(userId, userIdNow)
 	c.JSON(http.StatusOK, response)
 }
