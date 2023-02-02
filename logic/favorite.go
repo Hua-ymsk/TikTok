@@ -68,7 +68,7 @@ func DoUnlike(userId int64, videoId string) types.FavoriteActionResp {
 }
 
 // DoSelectLikeList 查询喜欢列表
-func DoSelectLikeList(userId string) types.FavoriteListResp {
+func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 	userIdInt, errUser := strconv.Atoi(userId)
 	if errUser != nil {
 		return types.FavoriteListResp{
@@ -86,34 +86,12 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 			VideoList:  nil,
 		}
 	}
-	////关闭结果集
-	//defer func(res *sql.Rows) {
-	//	err := res.Close()
-	//	if err != nil {
-	//		return
-	//	}
-	//}(res)
-	//将查询到的结果集读取到返回值中
-	//for res.Next() {
-	//	var like types.Video
-	//	err := res.Scan(&like.ID,
-	//		&like.Author.UserID, &like.Author.Name, &like.Author.FollowCount, &like.Author.FollowerCount, &like.Author.IsFollow,
-	//		&like.PlayURL, &like.CoverURL, &like.FavoriteCount, &like.CommentCount, &like.IsFavorite, &like.Title)
-	//	if err != nil {
-	//		return types.FavoriteListResp{
-	//			StatusCode: "1",
-	//			StatusMsg:  fmt.Sprintf("scan error:%v", err),
-	//			VideoList:  nil,
-	//		}
-	//	}
-	//	likeList = append(likeList, like)
-	//}
 	//将查询到的结果集读取到返回值中
 	var likeList = make([]types.Video, 0, 100)
 	for _, videoInfo := range res {
 		var like types.Video
 		authorId := videoInfo.UserID
-		authorName, followCount, followerCount, isFollow, err := mysql.SelectUserInfo(authorId)
+		_, _, _, authorNickName, followerCount, followCount, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",
@@ -124,7 +102,7 @@ func DoSelectLikeList(userId string) types.FavoriteListResp {
 		videoIdStr := strconv.Itoa(int(videoInfo.ID))
 		like.ID = videoInfo.ID
 		like.Author.UserID = authorId
-		like.Author.Name = authorName
+		like.Author.Name = authorNickName
 		like.Author.FollowCount = followCount
 		like.Author.FollowerCount = followerCount
 		like.Author.IsFollow = isFollow

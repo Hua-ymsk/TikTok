@@ -55,7 +55,9 @@ func (api *FavoriteAPI) FavoriteList(c *gin.Context) {
 		            is_favorite<bool>:true-已点赞，false-未点赞
 		            title<string>:视频标题
 	*/
+	//使用中间件将token转化成user_id
+	userIdNow := c.GetInt64("user_id")
 	userId := c.Query("user_id")
-	response := logic.DoSelectLikeList(userId)
+	response := logic.DoSelectLikeList(userId, userIdNow)
 	c.JSON(http.StatusOK, response)
 }
