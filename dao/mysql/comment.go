@@ -40,34 +40,28 @@ func DeleteCommentInfo(commentId string) error {
 }
 
 // SelectDeleteCommentInfo 查询删除评论的信息
-func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, userId int64, videoId int64, err error) {
+func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err error) {
 	commentIdInt, errConv := strconv.Atoi(commentId)
 	if errConv != nil {
-		return models.Comment{}, 0, 0, fmt.Errorf("string to int error:%v", errConv)
+		return models.Comment{}, fmt.Errorf("string to int error:%v", errConv)
 	}
-	resComment := db.Select("id", "user_id", "timestamp", "content").Where("id = ?", commentIdInt).Take(&commentInfo)
+	resComment := db.Select("id", "user_id", "timestamp", "content", "video_id").Where("id = ?", commentIdInt).Take(&commentInfo)
 	if resComment.Error != nil {
-		return models.Comment{}, 0, 0, fmt.Errorf("commentid error:%v", resComment.Error)
+		return models.Comment{}, fmt.Errorf("commentid error:%v", resComment.Error)
 	}
 	if resComment.RowsAffected == 0 {
-		return models.Comment{}, 0, 0, fmt.Errorf("commentid no exist")
+		return models.Comment{}, fmt.Errorf("commentid no exist")
 	}
-	userId = commentInfo.UserId
-	videoId = commentInfo.VideoId
 	return
 }
 
 // SelectUserInfo 通过用户id获取用户信息
-func SelectUserInfo(userId int64) (nickName string, followCount, followerCount int64, err error) {
-	var user models.User
+func SelectUserInfo(userId int64) (user *models.User, err error) {
 	res := db.Select("nickname", "follows", "fans").Where("id = ?", userId).Take(&user)
 	if res.Error != nil {
 		err = res.Error
 		return
 	}
-	nickName = user.NickName
-	followCount = user.Follows
-	followerCount = user.Fans
 	return
 }
 
@@ -86,13 +80,9 @@ func SelectCommentList(videoId string) ([]*models.Comment, error) {
 }
 
 // SelectVideoUserId 查询发布视频的用户id
-func SelectVideoUserId(videoId string) (int64, error) {
-	videoIdInt, err := strconv.Atoi(videoId)
-	if err != nil {
-		return 0, fmt.Errorf("string to int error:%v", err)
-	}
+func SelectVideoUserId(videoId int64) (int64, error) {
 	var video models.Video
-	res := db.Select("user_id").Where("id = ?", videoIdInt).Take(&video)
+	res := db.Select("user_id").Where("id = ?", videoId).Take(&video)
 	if res.Error != nil {
 		return 0, fmt.Errorf("select video userinfo error:%v", res.Error)
 	}

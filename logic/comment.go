@@ -20,8 +20,16 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 			StatusMsg:  fmt.Sprintf("insert commentinfo error:%v", errIn),
 		}
 	}
+	videoIdInt, errStoi := strconv.Atoi(videoId)
+	if errStoi != nil {
+		return types.CommentActionResp{
+			Comment:    types.Comment{},
+			StatusCode: 1,
+			StatusMsg:  fmt.Sprintf("string to int error:%v", errStoi),
+		}
+	}
 	//查询视频用户信息
-	videoUserId, errVideoUser := mysql.SelectVideoUserId(videoId)
+	videoUserId, errVideoUser := mysql.SelectVideoUserId(int64(videoIdInt))
 	if errVideoUser != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -31,7 +39,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 	}
 	//查询评论用户的信息
 	//是否关注视频作者
-	_, _, _, _, _, _, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
+	_, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
 	if errIsFollow != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -40,7 +48,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 		}
 	}
 	//其他信息
-	userNickName, followCount, followerCount, errUserInfo := mysql.SelectUserInfo(userId)
+	commentUserInfo, errUserInfo := mysql.SelectUserInfo(userId)
 	if errUserInfo != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -58,19 +66,11 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 			CreateDate: commentTimeStr,
 			ID:         commentId,
 			User: types.User{
-<<<<<<< HEAD
-				Follows:  followCount,
-				Fans:     followerCount,
-				ID:       int64(userIdInt),
+				ID:       userId,
+				NickName: commentUserInfo.NickName,
+				Follows:  commentUserInfo.Follows,
+				Fans:     commentUserInfo.Fans,
 				IsFollow: isFollow,
-				NickName: userName,
-=======
-				FollowCount:   followCount,
-				FollowerCount: followerCount,
-				UserID:        userId,
-				IsFollow:      isFollow,
-				Name:          userNickName,
->>>>>>> 7711de7b60d61edcb2bb53c775ce518ad14b4a94
 			},
 		},
 		StatusCode: 0,
@@ -79,9 +79,9 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 }
 
 // DoUnCommentAction 执行删除评论操作
-func DoUnCommentAction(commentId string) types.CommentActionResp {
+func DoUnCommentAction(commentId string, userId int64) types.CommentActionResp {
 	//首先查询需要删除评论的信息
-	commentInfo, userId, videoId, errInfo := mysql.SelectDeleteCommentInfo(commentId)
+	commentInfo, errInfo := mysql.SelectDeleteCommentInfo(commentId)
 	if errInfo != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -89,9 +89,9 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 			StatusMsg:  fmt.Sprintf("query conmmentinfo error:%v", errInfo),
 		}
 	}
-	videoIdInt := strconv.Itoa(int(videoId))
+	videoId := commentInfo.VideoId
 	//查询视频用户信息
-	videoUserId, errVideoUser := mysql.SelectVideoUserId(videoIdInt)
+	videoUserId, errVideoUser := mysql.SelectVideoUserId(videoId)
 	if errVideoUser != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -101,7 +101,7 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 	}
 	//查删除评论用户的信息
 	//是否关注视频作者
-	_, _, _, _, _, _, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
+	_, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
 	if errIsFollow != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -110,7 +110,7 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 		}
 	}
 	//其他信息
-	userNickName, followCount, followerCount, errUserInfo := mysql.SelectUserInfo(userId)
+	commentUserInfo, errUserInfo := mysql.SelectUserInfo(userId)
 	if errUserInfo != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -137,19 +137,11 @@ func DoUnCommentAction(commentId string) types.CommentActionResp {
 			CreateDate: commentTimeStr,
 			ID:         commentInfo.ID,
 			User: types.User{
-<<<<<<< HEAD
-				Follows:  userInfo.Follows,
-				Fans:     userInfo.Fans,
-				ID:       userInfo.ID,
-				IsFollow: userInfo.IsFollow,
-				NickName: userInfo.UserName,
-=======
-				FollowCount:   followCount,
-				FollowerCount: followerCount,
-				UserID:        userId,
-				IsFollow:      isFollow,
-				Name:          userNickName,
->>>>>>> 7711de7b60d61edcb2bb53c775ce518ad14b4a94
+				ID:       userId,
+				NickName: commentUserInfo.NickName,
+				Follows:  commentUserInfo.Follows,
+				Fans:     commentUserInfo.Fans,
+				IsFollow: isFollow,
 			},
 		},
 		StatusCode: 0,
@@ -171,7 +163,7 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 	for _, comment := range comments {
 		var commentTemp types.Comment
 		commentUserId := comment.UserId
-		_, _, _, commentName, followerCount, followCount, isFollow, err := mysql.QueryUserID(commentUserId, userId)
+		commentUserInfo, isFollow, err := mysql.QueryUserID(commentUserId, userId)
 		if err != nil {
 			return types.CommentListResp{
 				CommentList: nil,
@@ -184,17 +176,10 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 		//将时间格式化为mm:dd
 		commentTimeStr := fmt.Sprintf("%02d:%02d", commentTime.Month(), commentTime.Day())
 		commentTemp.ID = comment.ID
-<<<<<<< HEAD
-		commentTemp.User.ID = comment.UserId
-		commentTemp.User.NickName = userName
-		commentTemp.User.Follows = followCount
-		commentTemp.User.Fans = followerCount
-=======
-		commentTemp.User.UserID = comment.UserId
-		commentTemp.User.Name = commentName
-		commentTemp.User.FollowCount = followCount
-		commentTemp.User.FollowerCount = followerCount
->>>>>>> 7711de7b60d61edcb2bb53c775ce518ad14b4a94
+		commentTemp.User.ID = commentUserId
+		commentTemp.User.NickName = commentUserInfo.NickName
+		commentTemp.User.Follows = commentUserInfo.Follows
+		commentTemp.User.Fans = commentUserInfo.Fans
 		commentTemp.User.IsFollow = isFollow
 		commentTemp.Content = comment.Content
 		commentTemp.CreateDate = commentTimeStr
@@ -232,7 +217,7 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 //		//将时间戳转换为时间
 //		commentTime := time.Unix(comment.Timestamp, 0)
 //		//将时间格式化为mm:dd
-//		commentTimeStr := fmt.Sprintf("%02d:%02d", commentTime.Month(), commentTime.Day())
+//	commentTimeStr := fmt.Sprintf("%02d:%02d", commentTime.Month(), commentTime.Day())
 //		commentTemp.ID = comment.ID
 //		commentTemp.User.UserID = comment.UserId
 //		commentTemp.User.Name = commentName

@@ -91,7 +91,7 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 	for _, videoInfo := range res {
 		var like types.Video
 		authorId := videoInfo.UserID
-		_, _, _, authorNickName, followerCount, followCount, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
+		authorInfo, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",
@@ -101,17 +101,10 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 		}
 		videoIdStr := strconv.Itoa(int(videoInfo.ID))
 		like.ID = videoInfo.ID
-<<<<<<< HEAD
-		like.Author.ID = videoInfo.UserID
-		like.Author.NickName = authorName
-		like.Author.Follows = followCount
-		like.Author.Fans = followerCount
-=======
-		like.Author.UserID = authorId
-		like.Author.Name = authorNickName
-		like.Author.FollowCount = followCount
-		like.Author.FollowerCount = followerCount
->>>>>>> 7711de7b60d61edcb2bb53c775ce518ad14b4a94
+		like.Author.ID = authorId
+		like.Author.NickName = authorInfo.NickName
+		like.Author.Follows = authorInfo.Follows
+		like.Author.Fans = authorInfo.Fans
 		like.Author.IsFollow = isFollow
 		like.PlayURL = videoInfo.PlayURL
 		like.CoverURL = videoInfo.CoverURL

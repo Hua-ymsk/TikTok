@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"strconv"
 	"tiktok/models"
 )
@@ -14,10 +13,7 @@ func LikeExist(userId int64, videoId string) (bool, error) {
 		return false, fmt.Errorf("string to int error:%v", err)
 	}
 	var like = make([]*models.Like, 0)
-	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Take(&like)
-	if res.Error != gorm.ErrRecordNotFound && res.Error != nil {
-		return false, fmt.Errorf("like action error: %v", res.Error)
-	}
+	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Find(&like)
 	if res.RowsAffected == 0 {
 		return false, nil
 	}

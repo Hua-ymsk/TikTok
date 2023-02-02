@@ -42,7 +42,7 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 		c.JSON(http.StatusOK, response)
 	} else if actionType == "2" {
 		commentId := c.Query("comment_id")
-		response := logic.DoUnCommentAction(commentId)
+		response := logic.DoUnCommentAction(commentId, userId)
 		c.JSON(http.StatusOK, response)
 	}
 
