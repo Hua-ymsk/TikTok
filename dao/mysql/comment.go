@@ -57,7 +57,7 @@ func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err 
 
 // SelectUserInfo 通过用户id获取用户信息
 func SelectUserInfo(userId int64) (user *models.User, err error) {
-	res := db.Select("id", "nickname", "follows", "fans").Where("id = ?", userId).Take(&user)
+	res := db.Select("nickname", "follows", "fans").Where("id = ?", userId).Take(&user)
 	if res.Error != nil {
 		err = res.Error
 		return
