@@ -66,3 +66,16 @@ func CheckFavorite(user_id int64, video_id int64) (isfavorite bool, err error) {
 	
 	return true, nil
 }
+
+func GetUserById(id int64) (user *models.User, err error) {
+	user = new(models.User)
+	res := db.Where("id = ?", id).Find(&user)
+	if res.Error != nil && res.Error != gorm.ErrRecordNotFound {
+		return nil, res.Error
+	}
+	if res.Error == gorm.ErrRecordNotFound {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	return
+}
