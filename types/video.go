@@ -44,9 +44,10 @@ type Video struct {
 }
 
 type User struct {
-	ID   int64  `json:"id"`             // 用户id
-	UserName     string `json:"name"`           // 用户名称
+	ID       int64  `json:"id"`             // 用户id
+	NickName string `json:"name"`           // 用户名称
 	Follows  int64  `json:"follow_count"`   // 关注总数
 	Fans     int64  `json:"follower_count"` // 粉丝总数
 	IsFollow bool   `json:"is_follow"`      // true-已关注，false-未关注
+
 }

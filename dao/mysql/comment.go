@@ -40,40 +40,29 @@ func DeleteCommentInfo(commentId string) error {
 }
 
 // SelectDeleteCommentInfo 查询删除评论的信息
-func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, userInfo models.User, err error) {
+func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err error) {
 	commentIdInt, errConv := strconv.Atoi(commentId)
 	if errConv != nil {
-		return models.Comment{}, models.User{}, fmt.Errorf("string to int error:%v", errConv)
+		return models.Comment{}, fmt.Errorf("string to int error:%v", errConv)
 	}
-	resComment := db.Where("id = ?", commentIdInt).First(&commentInfo)
+	resComment := db.Select("id", "user_id", "timestamp", "content", "video_id").Where("id = ?", commentIdInt).Take(&commentInfo)
 	if resComment.Error != nil {
-		return models.Comment{}, models.User{}, fmt.Errorf("commentid error:%v", resComment.Error)
+		return models.Comment{}, fmt.Errorf("commentid error:%v", resComment.Error)
 	}
 	if resComment.RowsAffected == 0 {
-		return models.Comment{}, models.User{}, fmt.Errorf("commentid no exist")
-	}
-	resUser := db.Where("id = ?", commentInfo.UserId).First(&userInfo)
-	if resUser.Error != nil {
-		return models.Comment{}, models.User{}, fmt.Errorf("userid error:%v", resUser.Error)
-	}
-	if resUser.RowsAffected == 0 {
-		return models.Comment{}, models.User{}, fmt.Errorf("user no exist")
+		return models.Comment{}, fmt.Errorf("commentid no exist")
 	}
 	return
 }
 
 // SelectUserInfo 通过用户id获取用户信息
-func SelectUserInfo(userId int64) (userName string, followCount, followerCount int64, isFollow bool, err error) {
-	var user models.User
-	res := db.Where("id = ?", userId).First(&user)
+func SelectUserInfo(userId int64) (user *models.User, err error) {
+	res := db.Select("nickname", "follows", "fans").Where("id = ?", userId).Take(&user)
 	if res.Error != nil {
-		return "", 0, 0, false, fmt.Errorf("select comment userinfo error:%v", res.Error)
+		err = res.Error
+		return
 	}
-	//检查是否找到数据
-	if res.RowsAffected == 0 {
-		return "", 0, 0, false, fmt.Errorf("user no exist")
-	}
-	return user.UserName, user.Follows, user.Fans, user.IsFollow, nil
+	return
 }
 
 // SelectCommentList 查询评论列表
@@ -83,9 +72,19 @@ func SelectCommentList(videoId string) ([]*models.Comment, error) {
 		return nil, fmt.Errorf("string to int error%v", errVint)
 	}
 	var comments = make([]*models.Comment, 0)
-	res := db.Where("video_id = ?", videoIdInt).Find(&comments)
+	res := db.Select("id", "user_id", "timestamp", "content").Where("video_id = ?", videoIdInt).Find(&comments)
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}
 	return comments, nil
+}
+
+// SelectVideoUserId 查询发布视频的用户id
+func SelectVideoUserId(videoId int64) (int64, error) {
+	var video models.Video
+	res := db.Select("user_id").Where("id = ?", videoId).Take(&video)
+	if res.Error != nil {
+		return 0, fmt.Errorf("select video userinfo error:%v", res.Error)
+	}
+	return video.UserID, nil
 }
