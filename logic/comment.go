@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+	"github.com/jinzhu/copier"
 	"strconv"
 	"tiktok/dao/mysql"
 	"tiktok/types"
@@ -20,12 +21,12 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 			StatusMsg:  fmt.Sprintf("insert commentinfo error:%v", errIn),
 		}
 	}
-	videoIdInt, errStoi := strconv.Atoi(videoId)
-	if errStoi != nil {
+	videoIdInt, errConv := strconv.Atoi(videoId)
+	if errConv != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
 			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("string to int error:%v", errStoi),
+			StatusMsg:  fmt.Sprintf("string to int error:%v", errConv),
 		}
 	}
 	//查询视频用户信息
@@ -175,13 +176,23 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 		commentTime := time.Unix(comment.Timestamp, 0)
 		//将时间格式化为mm-dd
 		commentTimeStr := fmt.Sprintf("%02d-%02d", commentTime.Month(), commentTime.Day())
-		commentTemp.ID = comment.ID
-		commentTemp.User.ID = commentUserId
-		commentTemp.User.NickName = commentUserInfo.NickName
-		commentTemp.User.Follows = commentUserInfo.Follows
-		commentTemp.User.Fans = commentUserInfo.Fans
+		errCopy := copier.Copy(&commentTemp, comment)
+		if errCopy != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("copy commentinfo error:%v", err),
+			}
+		}
+		errCopy = copier.Copy(&commentTemp.User, commentUserInfo)
+		if errCopy != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("copy commentuserinfo error:%v", err),
+			}
+		}
 		commentTemp.User.IsFollow = isFollow
-		commentTemp.Content = comment.Content
 		commentTemp.CreateDate = commentTimeStr
 		commentList = append(commentList, commentTemp)
 	}
