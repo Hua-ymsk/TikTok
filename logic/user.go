@@ -79,6 +79,6 @@ func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
 	}
 	var responseUser types.User
 	//这里查询的是当前要查询的用户
-	_, responseUser.UserID, _, responseUser.Name, responseUser.FollowerCount, responseUser.FollowCount, responseUser.IsFollow, _ = mysql.QueryUserID(user.ID, id)
+	_, responseUser.ID, _, responseUser.UserName, responseUser.Fans, responseUser.Follows, responseUser.IsFollow, _ = mysql.QueryUserID(user.ID, id)
 	return utils.CCResponse(0, "用户信息获取成功", responseUser)
 }
