@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 	"tiktok/models"
 )
@@ -56,13 +55,11 @@ func QueryUserID(userId int64, usernowId any) (responseUser *models.User, isFoll
 
 	//当查询列表有我们查到的
 	if follow.FollowingID == userNow.ID && follow.FollowedID == responseUser.ID {
-		fmt.Println("test3")
 		return responseUser, true, nil
 		//return true, user.ID, user.PassWord, user.NickName, user.Fans, user.Follows, user.IsFollow, nil
 	}
 	//查不到关系
 	if re.RowsAffected == 0 {
-		fmt.Println("test")
 		return responseUser, false, nil
 	}
 	//查表出错
@@ -70,6 +67,5 @@ func QueryUserID(userId int64, usernowId any) (responseUser *models.User, isFoll
 		return nil, false, err
 	}
 	//默认返回
-	fmt.Println("test2")
 	return responseUser, false, nil
 }
