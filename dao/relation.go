@@ -155,7 +155,7 @@ func SelectFollowerList(UserId int64) (*sql.Rows, error) {
 			fans,
 			follows,
 		IF
-			(f.relationship= ?, 1, 0) AS is_followed 
+			(f.relationship= 1, 1, 0) AS is_followed 
 		FROM
 			users
 			LEFT JOIN follows f ON users.id = f.following_user_id 
@@ -165,7 +165,7 @@ func SelectFollowerList(UserId int64) (*sql.Rows, error) {
 	if err != nil {
 		return nil, fmt.Errorf("select init error: %w", err)
 	}
-	res, err := stmt.Query(UserId, UserId)
+	res, err := stmt.Query(UserId)
 	if err != nil {
 		return nil, fmt.Errorf("select execute error: %w", err)
 	}
