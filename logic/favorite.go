@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+	"github.com/jinzhu/copier"
 	"strconv"
 	"tiktok/dao/mysql"
 	"tiktok/types"
@@ -100,25 +101,28 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 			}
 		}
 		videoIdStr := strconv.Itoa(int(videoInfo.ID))
-		like.ID = videoInfo.ID
-		like.Author.ID = authorId
-		like.Author.NickName = authorInfo.NickName
-		like.Author.Follows = authorInfo.Follows
-		like.Author.Fans = authorInfo.Fans
-		like.Author.IsFollow = isFollow
-		like.PlayURL = videoInfo.PlayURL
-		like.CoverURL = videoInfo.CoverURL
-		like.FavoriteCount = videoInfo.FavoriteCount
-		like.CommentCount = videoInfo.CommentCount
-		like.IsFavorite, err = mysql.LikeExist(userIdNow, videoIdStr)
+		exist, errLike := mysql.LikeExist(userIdNow, videoIdStr)
+		if errLike != nil {
+			fmt.Println(errLike)
+		}
+		err = copier.Copy(&like, videoInfo)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",
-				StatusMsg:  fmt.Sprintf("select like exist error:%v", err),
+				StatusMsg:  fmt.Sprintf("copy videoinfo error:%v", err),
 				VideoList:  nil,
 			}
 		}
-		like.Title = videoInfo.Title
+		err = copier.Copy(&like.Author, authorInfo)
+		if err != nil {
+			return types.FavoriteListResp{
+				StatusCode: "1",
+				StatusMsg:  fmt.Sprintf("copy authorinfo error:%v", err),
+				VideoList:  nil,
+			}
+		}
+		like.Author.IsFollow = isFollow
+		like.IsFavorite = exist
 		likeList = append(likeList, like)
 	}
 	return types.FavoriteListResp{
