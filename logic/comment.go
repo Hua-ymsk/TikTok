@@ -203,45 +203,55 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 	}
 }
 
-//// DoNoLoginCommentList 未登录的用户查看评论列表
-//func DoNoLoginCommentList(videoId string) types.CommentListResp {
-//	comments, err := mysql.SelectCommentList(videoId)
-//	if err != nil {
-//		return types.CommentListResp{
-//			CommentList: nil,
-//			StatusCode:  1,
-//			StatusMsg:   fmt.Sprintf("select comment list error:%v", err),
-//		}
-//	}
-//	var commentList = make([]types.Comment, 0, 100)
-//	for _, comment := range comments {
-//		var commentTemp types.Comment
-//		commentUserId := comment.UserId
-//		commentName, followCount, followerCount, errUserInfo := mysql.SelectUserInfo(commentUserId)
-//		if errUserInfo != nil {
-//			return types.CommentListResp{
-//				CommentList: nil,
-//				StatusCode:  1,
-//				StatusMsg:   fmt.Sprintf("select userinfo error:%v", errUserInfo),
-//			}
-//		}
-//		//将时间戳转换为时间
-//		commentTime := time.Unix(comment.Timestamp, 0)
-//		//将时间格式化为mm-dd
-//	commentTimeStr := fmt.Sprintf("%02d-%02d", commentTime.Month(), commentTime.Day())
-//		commentTemp.ID = comment.ID
-//		commentTemp.User.UserID = comment.UserId
-//		commentTemp.User.Name = commentName
-//		commentTemp.User.FollowCount = followCount
-//		commentTemp.User.FollowerCount = followerCount
-//		commentTemp.User.IsFollow = false
-//		commentTemp.Content = comment.Content
-//		commentTemp.CreateDate = commentTimeStr
-//		commentList = append(commentList, commentTemp)
-//	}
-//	return types.CommentListResp{
-//		CommentList: commentList,
-//		StatusCode:  0,
-//		StatusMsg:   "success",
-//	}
-//}
+// DoNoLoginCommentList 未登录的用户查看评论列表
+func DoNoLoginCommentList(videoId string) types.CommentListResp {
+	comments, err := mysql.SelectCommentList(videoId)
+	if err != nil {
+		return types.CommentListResp{
+			CommentList: nil,
+			StatusCode:  1,
+			StatusMsg:   fmt.Sprintf("select comment list error:%v", err),
+		}
+	}
+	var commentList = make([]types.Comment, 0, 100)
+	for _, comment := range comments {
+		var commentTemp types.Comment
+		commentUserId := comment.UserId
+		commentUserInfo, errUserInfo := mysql.SelectUserInfo(commentUserId)
+		if errUserInfo != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("select userinfo error:%v", errUserInfo),
+			}
+		}
+		//将时间戳转换为时间
+		commentTime := time.Unix(comment.Timestamp, 0)
+		//将时间格式化为mm-dd
+		commentTimeStr := commentTime.Format("01-02")
+		errCopy := copier.Copy(&commentTemp, comment)
+		if errCopy != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("copy commentinfo error:%v", err),
+			}
+		}
+		errCopy = copier.Copy(&commentTemp.User, commentUserInfo)
+		if errCopy != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("copy commentuserinfo error:%v", err),
+			}
+		}
+		commentTemp.User.IsFollow = false
+		commentTemp.CreateDate = commentTimeStr
+		commentList = append(commentList, commentTemp)
+	}
+	return types.CommentListResp{
+		CommentList: commentList,
+		StatusCode:  0,
+		StatusMsg:   "success",
+	}
+}

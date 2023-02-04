@@ -70,10 +70,12 @@ func (api *CommentAPI) CommentList(c *gin.Context) {
 	//使用中间件将token转化成user_id
 	userId := c.GetInt64("user_id")
 	videoId := c.Query("video_id")
-	//if userId == 0 {
-	//	response := logic.DoNoLoginCommentList(videoId)
-	//	c.JSON(http.StatusOK, response)
-	//}
-	response := logic.DoCommentList(userId, videoId)
-	c.JSON(http.StatusOK, response)
+	if userId == -1 {
+		response := logic.DoNoLoginCommentList(videoId)
+		c.JSON(http.StatusOK, response)
+	} else {
+		response := logic.DoCommentList(userId, videoId)
+		c.JSON(http.StatusOK, response)
+	}
+
 }

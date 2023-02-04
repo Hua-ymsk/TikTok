@@ -49,10 +49,10 @@ func InitRouter() *gin.Engine {
 		}
 		// comment apis
 		comment := apiRouter.Group("/comment")
+		comment.GET("/list/", middleware.NoLoginJWTAuth(), commentAPI.CommentList)
 		comment.Use(middleware.JWTAuth())
 		{
 			comment.POST("/action/", commentAPI.CommentAction)
-			comment.GET("/list/", commentAPI.CommentList)
 		}
 		// message apis
 		message := apiRouter.Group("/message")
