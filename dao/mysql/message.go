@@ -34,7 +34,7 @@ func SelectMessageChat(userId int64, toUserId string) ([]*models.Chat, error) {
 		return nil, fmt.Errorf("string to int error:%v", errConv)
 	}
 	var chats = make([]*models.Chat, 0, 100)
-	res := db.Select("id", "content", "timestamp").Where("send_user_id = ? AND receive_user_id = ?", userId, toUserIdInt).Find(&chats)
+	res := db.Select("id", "content", "timestamp").Where("send_user_id = ? AND receive_user_id = ? OR send_user_id = ? AND receive_user_id = ? ", userId, toUserIdInt, toUserIdInt, userId).Find(&chats)
 	if res.RowsAffected == 0 {
 		return nil, fmt.Errorf("select message chat error")
 	}
