@@ -60,7 +60,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 	//将时间戳转换为时间
 	commentTime := time.Unix(timestamp, 0)
 	//将时间格式化为mm-dd
-	commentTimeStr := fmt.Sprintf("%02d-%02d", commentTime.Month(), commentTime.Day())
+	commentTimeStr := commentTime.Format("01-02")
 	return types.CommentActionResp{
 		Comment: types.Comment{
 			Content:    commentText,
@@ -131,7 +131,7 @@ func DoUnCommentAction(commentId string, userId int64) types.CommentActionResp {
 	//将时间戳转换为时间
 	commentTime := time.Unix(commentInfo.Timestamp, 0)
 	//将时间格式化为mm-dd
-	commentTimeStr := fmt.Sprintf("%02d-%02d", commentTime.Month(), commentTime.Day())
+	commentTimeStr := commentTime.Format("01-02")
 	return types.CommentActionResp{
 		Comment: types.Comment{
 			Content:    commentInfo.Content,
@@ -175,7 +175,7 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 		//将时间戳转换为时间
 		commentTime := time.Unix(comment.Timestamp, 0)
 		//将时间格式化为mm-dd
-		commentTimeStr := fmt.Sprintf("%02d-%02d", commentTime.Month(), commentTime.Day())
+		commentTimeStr := commentTime.Format("01-02")
 		errCopy := copier.Copy(&commentTemp, comment)
 		if errCopy != nil {
 			return types.CommentListResp{
