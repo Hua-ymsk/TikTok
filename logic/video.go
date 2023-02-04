@@ -34,15 +34,15 @@ func (logic *VideoLogic) Feed(latest_time int64, sender_id int64) (list []types.
 	}
 	next_time = videos[len(videos)-1].TimeStamp
 	// send_id为0，用户未登录，不查点赞信息
-	if sender_id == 0 {
-		return
-	}
-	for index, video := range list {
-		list[index].IsFavorite, err = mysql.CheckFavorite(sender_id, video.ID)
-		if err != nil {
-			break
+	if sender_id != 0 {
+		for index, video := range list {
+			list[index].IsFavorite, err = mysql.CheckFavorite(sender_id, video.ID)
+			if err != nil {
+				break
+			}
 		}
 	}
+	
 	// 用户信息
 	for index, _ := range videos {
 		author, err := mysql.GetUserById(videos[index].UserID)
@@ -51,6 +51,10 @@ func (logic *VideoLogic) Feed(latest_time int64, sender_id int64) (list []types.
 		}
 		if err := copier.Copy(&list[index].Author, &author); err != nil {
 			continue
+		}
+		// 是否关注
+		if sender_id != 0 {
+			list[index].Author.IsFollow, _ = mysql.ChekFollow(sender_id, author.ID)
 		}
 	}
 
@@ -111,6 +115,16 @@ func (logic *VideoLogic) VideoList(user_id, sender_id int64) (list []types.Video
 	}
 
 	// 作者信息(等jack写完)
+	// 用户信息
+	for index, _ := range videos {
+		author, err := mysql.GetUserById(videos[index].UserID)
+		if err != nil {
+			continue
+		}
+		if err := copier.Copy(&list[index].Author, &author); err != nil {
+			continue
+		}
+	}
 
 	return
 }

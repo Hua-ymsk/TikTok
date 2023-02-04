@@ -60,6 +60,37 @@ func JWTAuth() func(c *gin.Context) {
 	}
 }
 
+// JWTAuthMiddleware 基于JWT的认证中间件
+func NoLoginJWTAuth() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		tokenStr := c.Query("token")
+		if tokenStr == "" {
+			tokenStr = c.PostForm("token")
+		}
+		if tokenStr == "" {
+			c.Set("user_id", int64(-1))
+			c.Next()
+			return
+		}
+		mc, err := ParseToken(tokenStr)
+		if err != nil {
+			result.ResponseErr(c, "令牌无效或过期")
+			c.Abort()
+			return
+		}
+		// 验证签发人
+		if mc.Issuer != ISSUER {
+			result.ResponseErr(c, "令牌无效")
+			c.Abort()
+			return
+		}
+
+		// 将当前请求的userID信息保存到请求的上下文c上
+		c.Set("user_id", mc.UserID)
+		c.Next() // 后续的处理函数可以用过c.Get(ContextUserIDKey)来获取当前请求的用户信息
+	}
+}
+
 func keyFunc(_ *jwt.Token) (i interface{}, err error) {
 	return SECRET, nil
 }

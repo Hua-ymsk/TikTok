@@ -57,7 +57,7 @@ func DoUnFollow(UserId int64, ToUserId int64) (relationResponse types.RelationRe
 	}
 	if exist {
 		//有对方信息存在，修改标记(0为未互关，1为已互关)
-		e := dao.UpdDelRelation(ToUserId, UserId)
+		e := dao.UpdDelRelation(UserId, ToUserId)
 		if e != nil {
 			return types.RelationResponse{StatusCode: 1, StatusMsg: fmt.Sprintf("error, %s", e)}
 		}
