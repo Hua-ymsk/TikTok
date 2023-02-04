@@ -41,6 +41,11 @@ func JWTAuth() func(c *gin.Context) {
 		if tokenStr == "" {
 			tokenStr = c.PostForm("token")
 		}
+		if tokenStr == "" {
+			c.Set("user_id", int64(-1))
+			c.Next()
+			return
+		}
 		mc, err := ParseToken(tokenStr)
 		if err != nil {
 			result.ResponseErr(c, "令牌无效或过期")
