@@ -52,6 +52,10 @@ func (logic *VideoLogic) Feed(latest_time int64, sender_id int64) (list []types.
 		if err := copier.Copy(&list[index].Author, &author); err != nil {
 			continue
 		}
+		// 是否关注
+		if sender_id != 0 {
+			list[index].Author.IsFollow, _ = mysql.ChekFollow(sender_id, author.ID)
+		}
 	}
 
 	return
