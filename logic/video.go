@@ -111,6 +111,16 @@ func (logic *VideoLogic) VideoList(user_id, sender_id int64) (list []types.Video
 	}
 
 	// 作者信息(等jack写完)
+	// 用户信息
+	for index, _ := range videos {
+		author, err := mysql.GetUserById(videos[index].UserID)
+		if err != nil {
+			continue
+		}
+		if err := copier.Copy(&list[index].Author, &author); err != nil {
+			continue
+		}
+	}
 
 	return
 }
