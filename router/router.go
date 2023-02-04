@@ -12,6 +12,7 @@ var (
 	relationAPI = &controller.RelationAPI{}
 	favoriteAPI = &controller.FavoriteAPI{}
 	commentAPI  = &controller.CommentAPI{}
+	messageAPI  = &controller.MessageAPI{}
 	userAPI     = &controller.UserAPI{}
 )
 
@@ -52,6 +53,13 @@ func InitRouter() *gin.Engine {
 		{
 			comment.POST("/action/", commentAPI.CommentAction)
 			comment.GET("/list/", commentAPI.CommentList)
+		}
+		// message apis
+		message := apiRouter.Group("/message")
+		message.Use(middleware.JWTAuth())
+		{
+			message.POST("/action/", messageAPI.MessageAction)
+			message.GET("/chat/", messageAPI.MessageChat)
 		}
 		//user
 		user := apiRouter.Group("/user")
