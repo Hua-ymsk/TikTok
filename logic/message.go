@@ -43,6 +43,8 @@ func DoMessageChat(userId int64, toUserId string) types.MessageChatResp {
 			Content:    chat.Content,
 			CreateTime: messageTimeStr,
 			ID:         chat.ID,
+			ToUserId:   chat.ReceiveUserId,
+			FormUserId: chat.SendUserId,
 		}
 		res = append(res, temp)
 	}

@@ -12,7 +12,9 @@ type MessageChatResp struct {
 }
 
 type Message struct {
-	Content    string `json:"content"`     // 消息内容
-	CreateTime string `json:"create_time"` // 消息发送时间 yyyy-MM-dd HH:MM:ss
-	ID         int64  `json:"id"`          // 消息id
+	Content    string `json:"content"`      // 消息内容
+	CreateTime string `json:"create_time"`  // 消息发送时间 yyyy-MM-dd HH:MM:ss
+	ID         int64  `json:"id"`           // 消息id
+	ToUserId   int64  `json:"to_user_id"`   // 该消息接收者的id
+	FormUserId int64  `json:"form_user_id"` // 该消息发送者的id
 }
