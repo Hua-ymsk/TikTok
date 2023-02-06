@@ -27,6 +27,7 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 	if UserId == ToUserId {
 		response := types.RelationResponse{StatusCode: 1, StatusMsg: "你无法关注自己"}
 		c.JSON(http.StatusOK, response)
+		return
 	}
 	ActionType := c.Query("action_type")
 	if ActionType == "1" {
