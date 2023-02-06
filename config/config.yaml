@@ -1,7 +1,7 @@
 name: "sample-tiktok"
 mode: "dev"
 port: 2024
-start_time: "2022-02-09"
+start_time: "2023-01-20"
 machine_id: 1
 
 JwtAuth:
@@ -29,7 +29,10 @@ Mysql:
 Video:
   PlayUrlPrefix: "http://static.tiktok.hymsk.asia/videos"
   CoverUrlPrefix: "http://static.tiktok.hymsk.asia/covers"
-  PlayStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/videos"
-  CoverStaticPrefix: "D:/Programming_Learning/GoLang/douyin/static/covers"
+  PlayStaticPrefix: "/home/tiktok/static/videos"
+  CoverStaticPrefix: "/home/tiktok/static/covers"
+  ProfilePhotoPrefix: "http://static.tiktok.hymsk.asia/profile_photo.png"
   PageSize : 5
+
+
 

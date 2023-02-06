@@ -48,11 +48,12 @@ type FtpConfig struct {
 }
 
 type VideoConfig struct {
-	PlayUrlPrefix     string `mapstructure:"PlayUrlPrefix"`
-	CoverUrlPrefix    string `mapstructure:"CoverUrlPrefix"`
-	PlayStaticPrefix  string `mapstructure:"PlayStaticPrefix"`
-	CoverStaticPrefix string `mapstructure:"CoverStaticPrefix"`
-	PageSize          int64  `mapstructure:"PageSize"`
+	PlayUrlPrefix      string `mapstructure:"PlayUrlPrefix"`
+	CoverUrlPrefix     string `mapstructure:"CoverUrlPrefix"`
+	PlayStaticPrefix   string `mapstructure:"PlayStaticPrefix"`
+	CoverStaticPrefix  string `mapstructure:"CoverStaticPrefix"`
+	ProfilePhotoPrefix string `mapstructure:"ProfilePhotoPrefix"`
+	PageSize           int64  `mapstructure:"PageSize"`
 }
 
 var Conf = new(AppConfig)

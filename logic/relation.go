@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"tiktok/dao"
+	"tiktok/setting"
 	"tiktok/types"
 )
 
@@ -137,33 +138,34 @@ func SelectFollowerList(UserId int64) (followerListResponse types.RelationListRe
 }
 
 // SelectFriendList 查询互关信息列表并格式化转换成JSON格式
-func SelectFriendList(UserId int64) (friendListResponse types.RelationListResponse) {
-	var friendUserList = make([]types.FollowUser, 0, 100)
+func SelectFriendList(UserId int64) (friendListResponse types.FriendListResponse) {
+	var friendUserList = make([]types.FriendUser, 0, 100)
 	//执行查询
 	rows, err := dao.SelectFriendList(UserId)
 	//错误处理
 	if err != nil {
-		friendListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
+		friendListResponse = types.FriendListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
 		return
 	}
 	//格式化查询
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-			friendListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
+			friendListResponse = types.FriendListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
 			return
 		}
 	}(rows)
 	//循环读取结果集中的数据
 	for rows.Next() {
-		var u types.FollowUser
+		var u types.FriendUser
 		err := rows.Scan(&u.Id, &u.Name, &u.FollowCount, &u.FollowerCount, &u.IsFollow)
+		u.Avatar = setting.Conf.ProfilePhotoPrefix
 		if err != nil {
-			friendListResponse = types.RelationListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
+			friendListResponse = types.FriendListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
 			return
 		}
 		friendUserList = append(friendUserList, u)
 	}
-	friendListResponse = types.RelationListResponse{StatusCode: "0", StatusMsg: "True", User: friendUserList}
+	friendListResponse = types.FriendListResponse{StatusCode: "0", StatusMsg: "True", User: friendUserList}
 	return
 }
