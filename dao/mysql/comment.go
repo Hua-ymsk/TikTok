@@ -73,6 +73,9 @@ func SelectCommentList(videoId string) ([]*models.Comment, error) {
 	}
 	var comments = make([]*models.Comment, 0)
 	res := db.Select("id", "user_id", "timestamp", "content").Where("video_id = ?", videoIdInt).Find(&comments)
+	if res.Error != nil {
+		return nil, fmt.Errorf("select comment list error:%v", res.Error)
+	}
 	if res.RowsAffected == 0 {
 		return nil, nil
 	}

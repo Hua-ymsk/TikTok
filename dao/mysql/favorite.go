@@ -14,6 +14,9 @@ func LikeExist(userId int64, videoId string) (bool, error) {
 	}
 	var like = make([]*models.Like, 0)
 	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Find(&like)
+	if res.Error != nil {
+		return false, fmt.Errorf("select like info error:%v", res.Error)
+	}
 	if res.RowsAffected == 0 {
 		return false, nil
 	}
@@ -56,6 +59,9 @@ func DeleteLikeInfo(userId int64, videoId string) error {
 func SelectLikeList(userId int64) ([]*models.Video, error) {
 	var likes = make([]*models.Like, 0)
 	resLike := db.Select("user_id", "video_id").Where("user_id = ?", userId).Find(&likes)
+	if resLike.Error != nil {
+		return nil, fmt.Errorf("select likelist error:%v", resLike.Error)
+	}
 	//检查是否找到数据
 	if resLike.RowsAffected == 0 {
 		return nil, nil
