@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"tiktok/dao/mysql"
 	"tiktok/types"
-	"time"
 )
 
 // SendMessageAction 执行发送消息
@@ -37,12 +36,12 @@ func DoMessageChat(userId int64, toUserId string) types.MessageChatResp {
 	var res = make([]types.Message, 0, 100)
 	for _, chat := range chats {
 		//消息发送时间 yyyy-MM-dd HH:MM:ss
-		messageTime := time.Unix(chat.Timestamp, 0)
-		messageTimeStr := messageTime.Format("2006-01-02 15:04:05")
+		//messageTime := time.Unix(chat.Timestamp, 0)
+		//messageTimeStr := messageTime.Format("2006-01-02 15:04:05")
 		temp := types.Message{
 			Content:    chat.Content,
-			CreateTime: messageTimeStr,
-			ID:         chat.ID,
+			CreateTime: chat.Timestamp,
+			//ID:         chat.ID,
 			ToUserId:   chat.ReceiveUserId,
 			FormUserId: chat.SendUserId,
 		}
