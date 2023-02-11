@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"tiktok/common/result"
 	"tiktok/logic"
-	"tiktok/types"
 	jwt "tiktok/middleware"
+	"tiktok/types"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -92,8 +92,8 @@ func (api *VideoAPI) PublishListHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, types.PublishListResp{
 		StatusCode: 0,
-		StatusMsg: "请求成功",
-		VideoList: videoList,
+		StatusMsg:  "请求成功",
+		VideoList:  videoList,
 	})
 
 	return

@@ -42,7 +42,7 @@ func (logic *VideoLogic) Feed(latest_time int64, sender_id int64) (list []types.
 			}
 		}
 	}
-	
+
 	// 用户信息
 	for index, _ := range videos {
 		author, err := mysql.GetUserById(videos[index].UserID)

@@ -63,7 +63,7 @@ func CheckFavorite(user_id int64, video_id int64) (isfavorite bool, err error) {
 	if res.Error == gorm.ErrRecordNotFound {
 		return false, nil
 	}
-	
+
 	return true, nil
 }
 

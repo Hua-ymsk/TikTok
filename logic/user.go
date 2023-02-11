@@ -40,6 +40,8 @@ func (logic *UserRegisterLogic) RegisterUser(user models.User) utils.Response {
 		return utils.CommonResponse(-1, "用户名存在", -1, "")
 	}
 	//注册用户
+	//新增设置昵称为名称
+	user.NickName = user.UserName
 	userid := mysql.RegisterUser(&user)
 	//生成token
 	atoken, _, _ := middleware.GenToken(userid)
