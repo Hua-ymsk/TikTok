@@ -24,13 +24,14 @@ func (api *RelationAPI) RelationAction(c *gin.Context) {
 	UserId := c.GetInt64("user_id")
 	toUserId := c.Query("to_user_id")
 	ToUserId, _ := strconv.ParseInt(toUserId, 10, 64)
-	if UserId == ToUserId {
-		response := types.RelationResponse{StatusCode: 1, StatusMsg: "你无法关注自己"}
-		c.JSON(http.StatusOK, response)
-		return
-	}
+
 	ActionType := c.Query("action_type")
 	if ActionType == "1" {
+		if UserId == ToUserId {
+			response := types.RelationResponse{StatusCode: 1, StatusMsg: "你无法关注自己"}
+			c.JSON(http.StatusOK, response)
+			return
+		}
 		response := logic.DoFollow(UserId, ToUserId)
 		c.JSON(http.StatusOK, response)
 	} else if ActionType == "2" {
