@@ -180,6 +180,7 @@ func SelectFriendList(UserId int64) (*sql.Rows, error) {
 			users.user_name,
 			fans,
 			follows,
+			avatar_url,
 			1 is_followed
 		FROM
 			users

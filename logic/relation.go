@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"tiktok/dao"
-	"tiktok/setting"
 	"tiktok/types"
 )
 
@@ -158,8 +157,7 @@ func SelectFriendList(UserId int64) (friendListResponse types.FriendListResponse
 	//循环读取结果集中的数据
 	for rows.Next() {
 		var u types.FriendUser
-		err := rows.Scan(&u.Id, &u.Name, &u.FollowCount, &u.FollowerCount, &u.IsFollow)
-		u.Avatar = setting.Conf.ProfilePhotoPrefix
+		err := rows.Scan(&u.Id, &u.Name, &u.FollowCount, &u.FollowerCount, &u.Avatar, &u.IsFollow)
 		if err != nil {
 			friendListResponse = types.FriendListResponse{StatusCode: "1", StatusMsg: fmt.Sprintf("error, %s", err), User: friendUserList}
 			return
