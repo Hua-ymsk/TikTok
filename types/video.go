@@ -44,10 +44,15 @@ type Video struct {
 }
 
 type User struct {
-	ID       int64  `json:"id"`             // 用户id
-	NickName string `json:"name"`           // 用户名称
-	Follows  int64  `json:"follow_count"`   // 关注总数
-	Fans     int64  `json:"follower_count"` // 粉丝总数
-	IsFollow bool   `json:"is_follow"`      // true-已关注，false-未关注
-
+	ID             int64  `json:"id"`             // 用户id
+	NickName       string `json:"name"`           // 用户名称
+	Follows        int64  `json:"follow_count"`   // 关注总数
+	Fans           int64  `json:"follower_count"` // 粉丝总数
+	IsFollow       bool   `json:"is_follow"`      // true-已关注，false-未关注
+	AvatarUrl      string `json:"avatar"`
+	BackGround     string `json:"background_image"`
+	Signature      string `json:"signature"`
+	TotalFavorited int64  `json:"total_favorited"` //获赞数量
+	WorkCount      int64  `json:"work_count"`      //作品数量
+	FavoriteCount  int64  `json:"favorite_count"`  //喜欢数量
 }

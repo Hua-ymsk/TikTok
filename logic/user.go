@@ -77,17 +77,29 @@ func (logic *UserLoginLogic) LoginUser(user models.User) utils.Response {
 }
 
 func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
+	//id是token里的ID，userid是参数的
 	var responseUser types.User
 	//这里查询的是当前要查询的用户
-	CheckUser, isfollow, err := mysql.QueryUserID(userid, id)
+	likes, workCount, CheckUser, isfollow, err := mysql.QueryUserID(userid, id)
 	if err != nil {
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
-
 	if err := copier.Copy(&responseUser, &CheckUser); err != nil {
 		fmt.Println("copy err:", err)
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
+	res, errRead := mysql.SelectLikeList(userid)
+	if errRead != nil {
+		return utils.CCResponse(-1, "查询失败", nil)
+	}
+	var total int64 //获赞数量
+	for _, videInfo := range res {
+		total += videInfo.FavoriteCount
+	}
+	responseUser.TotalFavorited = total
 	responseUser.IsFollow = isfollow
+	responseUser.FavoriteCount = likes
+	responseUser.WorkCount = workCount
+
 	return utils.CCResponse(0, "用户信息获取成功", responseUser)
 }

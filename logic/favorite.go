@@ -92,7 +92,7 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 	for _, videoInfo := range res {
 		var like types.Video
 		authorId := videoInfo.UserID
-		authorInfo, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
+		_, _, authorInfo, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",

@@ -40,7 +40,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 	}
 	//查询评论用户的信息
 	//是否关注视频作者
-	_, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
+	_, _, _, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
 	if errIsFollow != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -102,7 +102,7 @@ func DoUnCommentAction(commentId string, userId int64) types.CommentActionResp {
 	}
 	//查删除评论用户的信息
 	//是否关注视频作者
-	_, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
+	_, _, _, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
 	if errIsFollow != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -164,7 +164,7 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 	for _, comment := range comments {
 		var commentTemp types.Comment
 		commentUserId := comment.UserId
-		commentUserInfo, isFollow, err := mysql.QueryUserID(commentUserId, userId)
+		_, _, commentUserInfo, isFollow, err := mysql.QueryUserID(commentUserId, userId)
 		if err != nil {
 			return types.CommentListResp{
 				CommentList: nil,
