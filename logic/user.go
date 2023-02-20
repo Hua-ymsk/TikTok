@@ -80,7 +80,7 @@ func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
 	//id是token里的ID，userid是参数的
 	var responseUser types.User
 	//这里查询的是当前要查询的用户
-	likes, workCount, CheckUser, isfollow, err := mysql.QueryUserID(userid, id)
+	workCount, likes, CheckUser, isfollow, err := mysql.QueryUserID(userid, id)
 	if err != nil {
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
