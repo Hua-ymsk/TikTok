@@ -96,6 +96,7 @@ func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
 	for _, videInfo := range res {
 		total += videInfo.FavoriteCount
 	}
+	//新增内容
 	responseUser.TotalFavorited = total
 	responseUser.IsFollow = isfollow
 	responseUser.FavoriteCount = likes
