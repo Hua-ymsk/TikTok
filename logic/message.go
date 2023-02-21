@@ -45,9 +45,6 @@ func DoMessageChat(userId int64, toUserId, preMsgTime string) types.MessageChatR
 	var res = make([]types.Message, 0, 100)
 	for _, chat := range chats {
 		if chat.Timestamp > int64(preMsgTimeInt) {
-			//消息发送时间 yyyy-MM-dd HH:MM:ss
-			//messageTime := time.Unix(chat.Timestamp, 0)
-			//messageTimeStr := messageTime.Format("2006-01-02 15:04:05")
 			temp := types.Message{
 				Content:    chat.Content,
 				CreateTime: chat.Timestamp,

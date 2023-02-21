@@ -39,22 +39,6 @@ func DeleteCommentInfo(commentId string) error {
 	return nil
 }
 
-// SelectDeleteCommentInfo 查询删除评论的信息
-//func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err error) {
-//	commentIdInt, errConv := strconv.Atoi(commentId)
-//	if errConv != nil {
-//		return models.Comment{}, fmt.Errorf("string to int error:%v", errConv)
-//	}
-//	resComment := db.Select("id", "user_id", "timestamp", "content", "video_id").Where("id = ?", commentIdInt).Take(&commentInfo)
-//	if resComment.Error != nil {
-//		return models.Comment{}, fmt.Errorf("commentid error:%v", resComment.Error)
-//	}
-//	if resComment.RowsAffected == 0 {
-//		return models.Comment{}, fmt.Errorf("commentid no exist")
-//	}
-//	return
-//}
-
 // SelectUserInfo 通过用户id获取用户信息
 func SelectUserInfo(userId int64) (user *models.User, favoriteCounts, workCounts, totalFavorite int64, err error) {
 	res := db.Where("id = ?", userId).Take(&user)

@@ -47,6 +47,7 @@ func (api *MessageAPI) MessageChat(c *gin.Context) {
 		            	create_time<string>:消息发送时间 yyyy-MM-dd HH:MM:ss
 						to_user_id<int>:该消息接收者的id
 						from_user_id<int>:该消息发送者的id
+						pre_msg_time<int>:上次最新消息的时间
 
 	*/
 	//使用中间件将token转化成user_id
