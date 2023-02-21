@@ -88,7 +88,8 @@ func (logic *UserInfoLogic) UserInfo(userid int64, id int64) utils.CResponse {
 		fmt.Println("copy err:", err)
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
-	res, errRead := mysql.SelectLikeList(userid)
+	//获取获赞数量
+	res, errRead := mysql.GetPublishList(userid)
 	if errRead != nil {
 		return utils.CCResponse(-1, "查询失败", nil)
 	}
