@@ -49,7 +49,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 		}
 	}
 	//其他信息
-	commentUserInfo, errUserInfo := mysql.SelectUserInfo(userId)
+	commentUserInfo, favoriteCounts, workCounts, totalFavorite, errUserInfo := mysql.SelectUserInfo(userId)
 	if errUserInfo != nil {
 		return types.CommentActionResp{
 			Comment:    types.Comment{},
@@ -67,11 +67,17 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 			CreateDate: commentTimeStr,
 			ID:         commentId,
 			User: types.User{
-				ID:       userId,
-				NickName: commentUserInfo.NickName,
-				Follows:  commentUserInfo.Follows,
-				Fans:     commentUserInfo.Fans,
-				IsFollow: isFollow,
+				ID:             commentUserInfo.ID,
+				NickName:       commentUserInfo.NickName,
+				Follows:        commentUserInfo.Follows,
+				Fans:           commentUserInfo.Fans,
+				IsFollow:       isFollow,
+				AvatarUrl:      commentUserInfo.AvatarUrl,
+				BackGround:     commentUserInfo.BackGround,
+				Signature:      commentUserInfo.Signature,
+				TotalFavorited: totalFavorite,
+				WorkCount:      workCounts,
+				FavoriteCount:  favoriteCounts,
 			},
 		},
 		StatusCode: 0,
@@ -80,45 +86,7 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 }
 
 // DoUnCommentAction 执行删除评论操作
-func DoUnCommentAction(commentId string, userId int64) types.CommentActionResp {
-	//首先查询需要删除评论的信息
-	commentInfo, errInfo := mysql.SelectDeleteCommentInfo(commentId)
-	if errInfo != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("query conmmentinfo error:%v", errInfo),
-		}
-	}
-	videoId := commentInfo.VideoId
-	//查询视频用户信息
-	videoUserId, errVideoUser := mysql.SelectVideoUserId(videoId)
-	if errVideoUser != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("select video userinfo error:%v", errVideoUser),
-		}
-	}
-	//查删除评论用户的信息
-	//是否关注视频作者
-	_, _, _, isFollow, errIsFollow := mysql.QueryUserID(videoUserId, userId)
-	if errIsFollow != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("query isfollow error:%v", errIsFollow),
-		}
-	}
-	//其他信息
-	commentUserInfo, errUserInfo := mysql.SelectUserInfo(userId)
-	if errUserInfo != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
-			StatusCode: 1,
-			StatusMsg:  fmt.Sprintf("query userinfo error:%v", errIsFollow),
-		}
-	}
+func DoUnCommentAction(commentId string) types.CommentActionResp {
 	//执行删除操作
 	errDelete := mysql.DeleteCommentInfo(commentId)
 	if errDelete != nil {
@@ -128,23 +96,8 @@ func DoUnCommentAction(commentId string, userId int64) types.CommentActionResp {
 			StatusMsg:  fmt.Sprintf("query conmmentinfo error:%v", errDelete),
 		}
 	}
-	//将时间戳转换为时间
-	commentTime := time.Unix(commentInfo.Timestamp, 0)
-	//将时间格式化为mm-dd
-	commentTimeStr := commentTime.Format("01-02")
 	return types.CommentActionResp{
-		Comment: types.Comment{
-			Content:    commentInfo.Content,
-			CreateDate: commentTimeStr,
-			ID:         commentInfo.ID,
-			User: types.User{
-				ID:       userId,
-				NickName: commentUserInfo.NickName,
-				Follows:  commentUserInfo.Follows,
-				Fans:     commentUserInfo.Fans,
-				IsFollow: isFollow,
-			},
-		},
+		Comment:    types.Comment{},
 		StatusCode: 0,
 		StatusMsg:  "success",
 	}
@@ -164,12 +117,20 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 	for _, comment := range comments {
 		var commentTemp types.Comment
 		commentUserId := comment.UserId
-		_, _, commentUserInfo, isFollow, err := mysql.QueryUserID(commentUserId, userId)
+		workCounts, favoriteCounts, commentUserInfo, isFollow, err := mysql.QueryUserID(commentUserId, userId)
 		if err != nil {
 			return types.CommentListResp{
 				CommentList: nil,
 				StatusCode:  1,
 				StatusMsg:   fmt.Sprintf("select userinfo error:%v", err),
+			}
+		}
+		totalFavorite, errTotal := mysql.TotalFavorite(commentUserId)
+		if errTotal != nil {
+			return types.CommentListResp{
+				CommentList: nil,
+				StatusCode:  1,
+				StatusMsg:   fmt.Sprintf("select totalfavorite error:%v", errTotal),
 			}
 		}
 		//将时间戳转换为时间
@@ -192,8 +153,11 @@ func DoCommentList(userId int64, videoId string) types.CommentListResp {
 				StatusMsg:   fmt.Sprintf("copy commentuserinfo error:%v", err),
 			}
 		}
-		commentTemp.User.IsFollow = isFollow
 		commentTemp.CreateDate = commentTimeStr
+		commentTemp.User.IsFollow = isFollow
+		commentTemp.User.TotalFavorited = totalFavorite
+		commentTemp.User.WorkCount = workCounts
+		commentTemp.User.FavoriteCount = favoriteCounts
 		commentList = append(commentList, commentTemp)
 	}
 	return types.CommentListResp{
@@ -217,7 +181,7 @@ func DoNoLoginCommentList(videoId string) types.CommentListResp {
 	for _, comment := range comments {
 		var commentTemp types.Comment
 		commentUserId := comment.UserId
-		commentUserInfo, errUserInfo := mysql.SelectUserInfo(commentUserId)
+		commentUserInfo, favoriteCounts, workCounts, totalFavorite, errUserInfo := mysql.SelectUserInfo(commentUserId)
 		if errUserInfo != nil {
 			return types.CommentListResp{
 				CommentList: nil,
@@ -245,8 +209,11 @@ func DoNoLoginCommentList(videoId string) types.CommentListResp {
 				StatusMsg:   fmt.Sprintf("copy commentuserinfo error:%v", err),
 			}
 		}
-		commentTemp.User.IsFollow = false
 		commentTemp.CreateDate = commentTimeStr
+		commentTemp.User.IsFollow = false
+		commentTemp.User.TotalFavorited = totalFavorite
+		commentTemp.User.WorkCount = workCounts
+		commentTemp.User.FavoriteCount = favoriteCounts
 		commentList = append(commentList, commentTemp)
 	}
 	return types.CommentListResp{

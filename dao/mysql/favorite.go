@@ -58,7 +58,7 @@ func DeleteLikeInfo(userId int64, videoId string) error {
 // SelectLikeList 查询喜欢列表
 func SelectLikeList(userId int64) ([]*models.Video, error) {
 	var likes = make([]*models.Like, 0)
-	resLike := db.Select("user_id", "video_id").Where("user_id = ?", userId).Find(&likes)
+	resLike := db.Select("video_id").Where("user_id = ?", userId).Find(&likes)
 	if resLike.Error != nil {
 		return nil, fmt.Errorf("select likelist error:%v", resLike.Error)
 	}
@@ -78,4 +78,17 @@ func SelectLikeList(userId int64) ([]*models.Video, error) {
 		return nil, nil
 	}
 	return videos, nil
+}
+
+// TotalFavorite 用户获赞数
+func TotalFavorite(userId int64) (int64, error) {
+	favorites, err := GetPublishList(userId)
+	if err != nil {
+		return 0, fmt.Errorf("select user favorite error:%v", err)
+	}
+	var totalFavorite int64
+	for _, temp := range favorites {
+		totalFavorite += temp.FavoriteCount
+	}
+	return totalFavorite, nil
 }

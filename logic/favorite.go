@@ -92,11 +92,19 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 	for _, videoInfo := range res {
 		var like types.Video
 		authorId := videoInfo.UserID
-		_, _, authorInfo, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
+		workCount, favoriteCount, authorInfo, isFollow, err := mysql.QueryUserID(authorId, userIdNow)
 		if err != nil {
 			return types.FavoriteListResp{
 				StatusCode: "1",
 				StatusMsg:  fmt.Sprintf("select authorinfo error:%v", err),
+				VideoList:  nil,
+			}
+		}
+		totalFavorite, errTotal := mysql.TotalFavorite(authorId)
+		if errTotal != nil {
+			return types.FavoriteListResp{
+				StatusCode: "1",
+				StatusMsg:  fmt.Sprintf("select favorite number error:%v", errTotal),
 				VideoList:  nil,
 			}
 		}
@@ -123,6 +131,9 @@ func DoSelectLikeList(userId string, userIdNow int64) types.FavoriteListResp {
 		}
 		like.Author.IsFollow = isFollow
 		like.IsFavorite = exist
+		like.Author.WorkCount = workCount
+		like.Author.FavoriteCount = favoriteCount
+		like.Author.TotalFavorited = totalFavorite
 		likeList = append(likeList, like)
 	}
 	return types.FavoriteListResp{

@@ -43,11 +43,17 @@ func (api *FavoriteAPI) FavoriteList(c *gin.Context) {
 		    	video_list<array[object (Video) {8}|null>:用户点赞视频列表
 		        	id<int>:视频唯一标识
 		            author<object>:视频作者信息
-		                id<int>:用户id
-		                name<string>:用户名称
-		                follow_count<int>:关注总数
-		                follower_count<int>:粉丝总数
-		                is_follow<bool>:true-已关注，false-未关注
+		                	id<int>:用户id
+			                name<string>:用户名称
+			                follow_count<int>:关注总数
+			                follower_count<int>:粉丝总数
+			                is_follow<bool>:true-已关注，false-未关注
+							avatar<string>:用户头像,
+		                	background_image<string>:用户个人页顶部大图,
+		                	signature<string>:个人简介,
+		                	total_favorited<string>:获赞数量,
+		                	work_count<int>:作品数,
+		                	favorite_count<int>:喜欢数
 		            play_url<string>:视频播放地址
 		            cover_url<string>:视频封面地址
 		            favorite_count<int>:视频的点赞总数

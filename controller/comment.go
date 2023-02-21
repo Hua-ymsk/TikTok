@@ -23,11 +23,17 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 		         comment<object(Comment){4}|null>:返回评论信息
 		         	id<int64>:评论id
 					user<object>:用户信息
-				                id<int>:用户id
-				                name<string>:用户名称
-				                follow_count<int>:关注总数
-				                follower_count<int>:粉丝总数
-				                is_follow<bool>:true-已关注，false-未关注
+							id<int>:用户id
+			                name<string>:用户名称
+			                follow_count<int>:关注总数
+			                follower_count<int>:粉丝总数
+			                is_follow<bool>:true-已关注，false-未关注
+							avatar<string>:用户头像,
+		                	background_image<string>:用户个人页顶部大图,
+		                	signature<string>:个人简介,
+		                	total_favorited<string>:获赞数量,
+		                	work_count<int>:作品数,
+		                	favorite_count<int>:喜欢数
 				content<string>:评论内容
 		        create_date<string>:评论发布日期，格式 mm-dd
 		    }
@@ -42,7 +48,7 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 		c.JSON(http.StatusOK, response)
 	} else if actionType == "2" {
 		commentId := c.Query("comment_id")
-		response := logic.DoUnCommentAction(commentId, userId)
+		response := logic.DoUnCommentAction(commentId)
 		c.JSON(http.StatusOK, response)
 	}
 
@@ -50,22 +56,28 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 
 func (api *CommentAPI) CommentList(c *gin.Context) {
 	/*
-		query:
-				video_id<string>:视频id
-				token<string>:用户鉴权token
-			response:
-				status_code<string>:状态码，0-成功，其他值-失败
-		    	status_msg<string|null>:返回状态描述
-		    	comment_list<array[object (Comment) {4}|null>:用户点赞视频列表
-		        	id<int>:评论id
-		            user<object>:评论用户信息
-		                id<int>:用户id
-		                name<string>:用户名称
-		                follow_count<int>:关注总数
-		                follower_count<int>:粉丝总数
-		                is_follow<bool>:true-已关注，false-未关注
-				content<string>:评论内容
-		        create_date<string>:评论发布日期，格式 mm-dd
+			query:
+					video_id<string>:视频id
+					token<string>:用户鉴权token
+				response:
+					status_code<string>:状态码，0-成功，其他值-失败
+			    	status_msg<string|null>:返回状态描述
+			    	comment_list<array[object (Comment) {4}|null>:用户点赞视频列表
+			        	id<int>:评论id
+			            user<object>:评论用户信息
+			                id<int>:用户id
+			                name<string>:用户名称
+			                follow_count<int>:关注总数
+			                follower_count<int>:粉丝总数
+			                is_follow<bool>:true-已关注，false-未关注
+							avatar<string>:用户头像,
+		                	background_image<string>:用户个人页顶部大图,
+		                	signature<string>:个人简介,
+		                	total_favorited<string>:获赞数量,
+		                	work_count<int>:作品数,
+		                	favorite_count<int>:喜欢数
+					content<string>:评论内容
+			        create_date<string>:评论发布日期，格式 mm-dd
 	*/
 	//使用中间件将token转化成user_id
 	userId := c.GetInt64("user_id")

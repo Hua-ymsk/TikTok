@@ -40,26 +40,43 @@ func DeleteCommentInfo(commentId string) error {
 }
 
 // SelectDeleteCommentInfo 查询删除评论的信息
-func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err error) {
-	commentIdInt, errConv := strconv.Atoi(commentId)
-	if errConv != nil {
-		return models.Comment{}, fmt.Errorf("string to int error:%v", errConv)
-	}
-	resComment := db.Select("id", "user_id", "timestamp", "content", "video_id").Where("id = ?", commentIdInt).Take(&commentInfo)
-	if resComment.Error != nil {
-		return models.Comment{}, fmt.Errorf("commentid error:%v", resComment.Error)
-	}
-	if resComment.RowsAffected == 0 {
-		return models.Comment{}, fmt.Errorf("commentid no exist")
-	}
-	return
-}
+//func SelectDeleteCommentInfo(commentId string) (commentInfo models.Comment, err error) {
+//	commentIdInt, errConv := strconv.Atoi(commentId)
+//	if errConv != nil {
+//		return models.Comment{}, fmt.Errorf("string to int error:%v", errConv)
+//	}
+//	resComment := db.Select("id", "user_id", "timestamp", "content", "video_id").Where("id = ?", commentIdInt).Take(&commentInfo)
+//	if resComment.Error != nil {
+//		return models.Comment{}, fmt.Errorf("commentid error:%v", resComment.Error)
+//	}
+//	if resComment.RowsAffected == 0 {
+//		return models.Comment{}, fmt.Errorf("commentid no exist")
+//	}
+//	return
+//}
 
 // SelectUserInfo 通过用户id获取用户信息
-func SelectUserInfo(userId int64) (user *models.User, err error) {
-	res := db.Select("id", "nickname", "follows", "fans").Where("id = ?", userId).Take(&user)
+func SelectUserInfo(userId int64) (user *models.User, favoriteCounts, workCounts, totalFavorite int64, err error) {
+	res := db.Where("id = ?", userId).Take(&user)
 	if res.Error != nil {
 		err = res.Error
+		return
+	}
+	//查询喜欢数量
+	resFavoriteCount := db.Model(models.Like{}).Where("user_id = ?", userId).Count(&favoriteCounts)
+	if resFavoriteCount.Error != nil {
+		err = resFavoriteCount.Error
+		return
+	}
+	//查询作品数量
+	resWorkCounts := db.Model(models.Video{}).Where("user_id = ?", userId).Count(&workCounts)
+	if resWorkCounts.Error != nil {
+		err = resWorkCounts.Error
+		return
+	}
+	//查询获赞数
+	totalFavorite, err = TotalFavorite(userId)
+	if err != nil {
 		return
 	}
 	return
