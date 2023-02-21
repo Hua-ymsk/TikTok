@@ -31,8 +31,11 @@ func DeleteCommentInfo(commentId string) error {
 	if err != nil {
 		return fmt.Errorf("string to int error:%v", err)
 	}
-	var comment = make([]*models.Comment, 0)
-	res := db.Where("id = ?", commentIdInt).Delete(&comment)
+	resQuery := db.Where("id = ?", commentIdInt).Take(&models.Comment{})
+	if resQuery.Error != nil {
+		return fmt.Errorf("comment info no exist: %v", resQuery.Error)
+	}
+	res := db.Where("id = ?", commentIdInt).Delete(&models.Comment{})
 	if res.Error != nil {
 		return fmt.Errorf("delete like error: %v", res.Error)
 	}

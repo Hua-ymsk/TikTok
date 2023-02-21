@@ -47,8 +47,7 @@ func DeleteLikeInfo(userId int64, videoId string) error {
 	if errVideo != nil {
 		return fmt.Errorf("string to int error:%v", errVideo)
 	}
-	var like = make([]*models.Like, 0)
-	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Delete(&like)
+	res := db.Where("user_id = ? AND video_id = ?", userId, videoIdInt).Delete(&models.Like{})
 	if res.Error != nil {
 		return fmt.Errorf("delete like error: %v", res.Error)
 	}

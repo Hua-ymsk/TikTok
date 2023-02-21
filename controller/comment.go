@@ -51,7 +51,6 @@ func (api *CommentAPI) CommentAction(c *gin.Context) {
 		response := logic.DoUnCommentAction(commentId)
 		c.JSON(http.StatusOK, response)
 	}
-
 }
 
 func (api *CommentAPI) CommentList(c *gin.Context) {

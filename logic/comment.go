@@ -86,18 +86,18 @@ func DoCommentAction(userId int64, videoId, commentText string) types.CommentAct
 }
 
 // DoUnCommentAction 执行删除评论操作
-func DoUnCommentAction(commentId string) types.CommentActionResp {
+func DoUnCommentAction(commentId string) types.CommentDeleteActionResp {
 	//执行删除操作
 	errDelete := mysql.DeleteCommentInfo(commentId)
 	if errDelete != nil {
-		return types.CommentActionResp{
-			Comment:    types.Comment{},
+		return types.CommentDeleteActionResp{
+			Comment:    nil,
 			StatusCode: 1,
 			StatusMsg:  fmt.Sprintf("query conmmentinfo error:%v", errDelete),
 		}
 	}
-	return types.CommentActionResp{
-		Comment:    types.Comment{},
+	return types.CommentDeleteActionResp{
+		Comment:    nil,
 		StatusCode: 0,
 		StatusMsg:  "success",
 	}
