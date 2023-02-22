@@ -4,8 +4,8 @@ import "mime/multipart"
 
 // 视频流
 type FeedReq struct {
-	LatestTime string `json:"latest_time"`
-	Token      string `json:"token"`
+	LatestTime string `form:"latest_time"`
+	Token      string `form:"token"`
 }
 type FeedResp struct {
 	NextTime   int64   `json:"next_time"`   // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
